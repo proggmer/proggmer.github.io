@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FunPay Tools — API Documentation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="tags">
+        <span class="tag">FunPay Tools API</span>
+        <span class="tag">Jetpack Compose UI</span>
+        <span class="tag">Local persistence</span>
+        <span class="tag">Chat automation</span>
+        <span class="tag">Support & licensing</span>
+      </div>
+      <h1>API Documentation</h1>
+      <p class="subtitle">
+        Документ описывает ключевые UI-компоненты, модели данных и локальный слой хранения приложения FunPay Tools:
+        настройки приветствий, ответы на отзывы, чат с вложениями и выделением сообщений, метки и папки, режим занятости,
+        расписание, блоки монетизации и поддержку проекта.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="card span-12">
+        <h2>Overview</h2>
+        <div class="cols">
+          <div>
+            <h3>Основные области</h3>
+            <ul>
+              <li>Настройки автоматических ответов и приветствий.</li>
+              <li>Работа с чатами: фильтрация, метки, папки, архив.</li>
+              <li>Экран переписки: выбор сообщений, медиа, поиск, перевод.</li>
+              <li>Режим занятости и расписание.</li>
+              <li>Поддержка, донаты, PRO-статусы и реклама-разблокировка.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Ключевые Compose-паттерны</h3>
+            <ul>
+              <li><code>remember</code> и <code>mutableStateOf</code> для локального состояния.</li>
+              <li><code>LazyColumn</code> для длинных списков и настроек.</li>
+              <li><code>Dialog</code> + <code>verticalScroll</code> для модальных редакторов.</li>
+              <li><code>rememberLauncherForActivityResult</code> для Photo Picker.</li>
+              <li><code>SharedPreferences</code> + Gson для локального хранения JSON.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-8">
+        <h2>Data Models</h2>
+        <h3>Chat and settings models</h3>
+        <pre>data class ChatLabel(
+  val id: String = UUID.randomUUID().toString(),
+  val name: String = "",
+  val color: String = "#7C4DFF"
+)
+
+data class ChatFolder(
+  val id: String = UUID.randomUUID().toString(),
+  val name: String = "",
+  val chatIds: List<String> = emptyList(),
+  val isPreset: Boolean = false,
+  val presetType: String? = null
+)
+
+data class BusyModeSettings(
+  val enabled: Boolean = false,
+  val message: String = "Я сейчас занят, отвечу позже",
+  val cooldownMinutes: Int = 60,
+  val autoRefund: Boolean = false,
+  val autoRefundMessage: Boolean = false,
+  val keepRaise: Boolean = false,
+  val keepAutoResponse: Boolean = false,
+  val keepGreeting: Boolean = false,
+  val enabledAt: Long = 0L,
+  val imageUri: String? = null,
+  val imageFirst: Boolean = true,
+  val skipRefundIfAutoDelivery: Boolean = false,
+  val autoDeliveryMessageEnabled: Boolean = false,
+  val autoDeliveryMessage: String = "Спасибо за заказ! Товар уже выдан автоматически..."
+)</pre>
+      </section>
+
+      <section class="card span-4">
+        <h2>Storage Layer</h2>
+        <p><b>ChatFolderManager</b> объединяет загрузку и сохранение меток, папок, связей чатов, busy mode, flood chat и расписания через SharedPreferences.</p>
+        <p class="note">Данные сериализуются в JSON и читаются обратно через Gson, что упрощает быстрый локальный persistence без отдельной БД.</p>
+      </section>
+
+      <section class="card span-12">
+        <h2>Compose Screens</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Компонент</th>
+              <th>Назначение</th>
+              <th>Ключевые элементы</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>AccountBannedView</code></td>
+              <td>Экран блокировки аккаунта с официальной причиной и кнопкой в поддержку.</td>
+              <td>Icon, scrollable reason box, CTA button.</td>
+            </tr>
+            <tr>
+              <td><code>GreetingDialog</code></td>
+              <td>Редактор приветствия с текстом, картинкой, кулдауном и порядком вывода.</td>
+              <td>Photo Picker, checkbox, slider, save/cancel.</td>
+            </tr>
+            <tr>
+              <td><code>ReviewSettingsDialog</code></td>
+              <td>Настройка ответов на отзывы: AI и шаблоны.</td>
+              <td>Tabs, sliders, switches, text fields, PRO gate.</td>
+            </tr>
+            <tr>
+              <td><code>ChatDetailScreen</code></td>
+              <td>Экран переписки с поиском, переводом, вложениями и выделением сообщений.</td>
+              <td>Lazy list, selection mode, multi-image dialog, swipe-back.</td>
+            </tr>
+            <tr>
+              <td><code>BusyModeDialog</code></td>
+              <td>Подробная настройка режима занятости.</td>
+              <td>Message, image, cooldown, refund flags, keep rules.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card span-6">
+        <h2>GreetingDialog</h2>
+        <div class="endpoint"><span class="method">UI</span><span class="path">/settings/greeting</span></div>
+        <ul>
+          <li>Поле текста приветствия.</li>
+          <li>Поддержка переменных: <code>$username</code>, <code>$chat_name</code>, <code>$chat_id</code>, <code>$date</code>, <code>$time</code>, <code>$full_date</code>, <code>$message_text</code>.</li>
+          <li>Выбор изображения через Photo Picker.</li>
+          <li>Порядок вывода картинки относительно текста.</li>
+          <li>Кулдаун от 1 до 168 часов.</li>
+          <li>Игнорирование системных сообщений.</li>
+        </ul>
+      </section>
+
+      <section class="card span-6">
+        <h2>ReviewSettingsDialog</h2>
+        <div class="endpoint"><span class="method post">UI</span><span class="path">/settings/reviews</span></div>
+        <ul>
+          <li>Два режима: AI и шаблоны.</li>
+          <li>PRO-доступ для AI-режима.</li>
+          <li>AI length от 1 до 10.</li>
+          <li>Опции: название лота, дата, стиль, инструкция, fallback.</li>
+          <li>Ручные шаблоны на 1–5 звёзд с включением/выключением.</li>
+          <li>Справка по переменным от <code>FpPlaceholders</code>.</li>
+        </ul>
+      </section>
+
+      <section class="card span-12">
+        <h2>Chat Organization</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>API</th>
+              <th>Описание</th>
+              <th>Особенности</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ChatFolderTabs</code></td>
+              <td>Горизонтальные вкладки фильтрации чатов.</td>
+              <td>Анимация цвета, кнопка “+” для управления папками.</td>
+            </tr>
+            <tr>
+              <td><code>ChatItemView</code></td>
+              <td>Карточка чата с аватаром, последним сообщением, меню и ярлыками.</td>
+              <td>Tooltip по меткам, архив, навигация в профиль и чат.</td>
+            </tr>
+            <tr>
+              <td><code>ChatItemMenu</code></td>
+              <td>Контекстное меню чата.</td>
+              <td>Метки, папки, копирование ссылки, архивирование.</td>
+            </tr>
+            <tr>
+              <td><code>ManageFoldersDialog</code></td>
+              <td>Создание и удаление папок.</td>
+              <td>Готовые пресеты и пользовательские папки.</td>
+            </tr>
+            <tr>
+              <td><code>ManageLabelsDialog</code></td>
+              <td>Создание и удаление меток.</td>
+              <td>Цвета меток, список доступных цветов, удаление.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card span-8">
+        <h2>Chat Detail</h2>
+        <div class="endpoint"><span class="method">UI</span><span class="path">/chat/{chatId}/{username}</span></div>
+        <ul>
+          <li>Загрузка истории сообщений и автопрокрутка вниз.</li>
+          <li>Поиск по сообщениям и навигация по результатам.</li>
+          <li>Выделение сообщений, копирование и ответ на одно сообщение.</li>
+          <li>Отправка одной или нескольких картинок.</li>
+          <li>Полноэкранный просмотр изображения.</li>
+          <li>Жест возврата свайпом от левого края.</li>
+          <li>Поддержка вставки изображений через content receiver.</li>
+        </ul>
+      </section>
+
+      <section class="card span-4">
+        <h2>Media Input</h2>
+        <p>Используются <code>PickVisualMedia</code> и <code>PickMultipleVisualMedia(maxItems = 10)</code> для выбора изображений.</p>
+        <p>Перед отправкой показывается диалог предпросмотра с подтверждением.</p>
+      </section>
+
+      <section class="card span-12">
+        <h2>Busy Mode and Schedule</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>API</th>
+              <th>Описание</th>
+              <th>Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>BusyModeCard</code></td>
+              <td>Карточка быстрого включения режима занятости.</td>
+              <td>Меняет цвет, высоту и границу при активации.</td>
+            </tr>
+            <tr>
+              <td><code>BusyModeDialog</code></td>
+              <td>Глубокая настройка busy mode.</td>
+              <td>Сообщение, кулдаун, авто-возврат, исключения, image order.</td>
+            </tr>
+            <tr>
+              <td><code>BusyScheduleSettings</code></td>
+              <td>Список расписаний по дням и минутам.</td>
+              <td>Поддержка слотов через полночь.</td>
+            </tr>
+            <tr>
+              <td><code>ChatFolderManager.getActiveScheduleSlot()</code></td>
+              <td>Определяет активный слот расписания.</td>
+              <td>Учитывает текущий день, вчерашний день и минуты суток.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card span-6">
+        <h2>Support & Licensing</h2>
+        <ul>
+          <li>Карточка “Мой доступ к функциям” с состояниями: PRO, рекламная разблокировка, закрыто.</li>
+          <li>Разъяснение, что закрыты только настройки, а не уже работающая функция.</li>
+          <li>Раздел поддержки разработки, портфолио, Telegram, реквизиты и FunPay-профиль.</li>
+          <li><code>ImprovedTariffCard</code> для кликабельных промо-карт.</li>
+          <li><code>ImprovedCopyableField</code> для копируемых реквизитов.</li>
+        </ul>
+      </section>
+
+      <section class="card span-6">
+        <h2>Utility Components</h2>
+        <pre>@Composable
+fun ImprovedCopyableField(
+  label: String,
+  value: String,
+  icon: ImageVector,
+  theme: AppTheme,
+  onCopy: (String) -> Unit
+)</pre>
+        <p class="small">Кликабельное поле с иконкой, названием, значением и кнопкой копирования. Используется для реквизитов и других однотипных строковых данных.</p>
+      </section>
+
+      <section class="card span-12">
+        <h2>Preset Definitions</h2>
+        <pre>private val presetFolderDefs = listOf(
+  ChatFolder(id = "preset_unread", name = "Непрочитанные", isPreset = true, presetType = "unread"),
+  ChatFolder(id = "preset_labeled", name = "С метками", isPreset = true, presetType = "labeled"),
+  ChatFolder(id = "preset_archived", name = "Архив", isPreset = true, presetType = "archived"),
+)</pre>
+        <p class="note">Пресеты позволяют быстро фильтровать список чатов по статусу, меткам и архиву без ручного создания папок.</p>
+      </section>
+
+      <section class="card span-12">
+        <h2>API Surface Summary</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Composables / objects</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Authentication / status</td>
+              <td><code>AccountBannedView</code></td>
+              <td>Статус блокировки и переход в поддержку.</td>
+            </tr>
+            <tr>
+              <td>Automation</td>
+              <td><code>GreetingDialog</code>, <code>ReviewSettingsDialog</code>, <code>BusyModeDialog</code></td>
+              <td>Гибкая настройка автоматизации общения и обработки заказов.</td>
+            </tr>
+            <tr>
+              <td>Messaging</td>
+              <td><code>ChatDetailScreen</code>, <code>ChatItemView</code>, <code>ChatItemMenu</code></td>
+              <td>Просмотр, управление и отправка сообщений.</td>
+            </tr>
+            <tr>
+              <td>Organization</td>
+              <td><code>ChatFolderTabs</code>, <code>ManageFoldersDialog</code>, <code>ManageLabelsDialog</code></td>
+              <td>Папки, метки и фильтрация чатов.</td>
+            </tr>
+            <tr>
+              <td>Monetization</td>
+              <td><code>PremiumFeature</code>, license checks, support cards</td>
+              <td>PRO-доступ, ad-unlock и донаты.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card span-12">
+        <h2>Compose / Android Patterns</h2>
+        <ul>
+          <li><code>rememberSaveable</code> и <code>mutableStateOf</code> используются для устойчивого UI-состояния.</li>
+          <li><code>Dialog</code> применён для крупных настроек, которые не помещаются в основной экран.</li>
+          <li><code>LazyColumn</code> помогает держать диалоги и настройки производительными.</li>
+          <li><code>rememberLauncherForActivityResult</code> используется для безопасного выбора фото через Photo Picker.</li>
+          <li><code>SharedPreferences</code> хранит пользовательские сущности и настройки без внешней базы.</li>
+          <li>Анимации построены через <code>animateColorAsState</code>, <code>animateDpAsState</code> и <code>AnimatedVisibility</code>.</li>
+        </ul>
+      </section>
+
+      <section class="card span-12">
+        <h2>Final Notes</h2>
+        <p>
+          Этот HTML уже собран как полноценная документация по текущему состоянию кода: основные экраны, модели, хранилище,
+          Compose-подходы, режимы монетизации и управленческие сценарии включены в одну структуру.
+        </p>
+      </section>
+    </div>
+
+    <div class="footer">
+      FunPay Tools API Documentation · Updated from latest provided code fragments
+    </div>
+  </div>
+</body>
+</html>

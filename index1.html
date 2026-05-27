@@ -1,0 +1,1008 @@
+python3 << 'PYEOF'
+html = r'''<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FunPay Tools — Полный Plugin API</title>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet"/>
+<style>
+:root,[data-theme="light"]{
+  --bg:#f7f6f2;--sur:#f9f8f5;--sur2:#fbfbf9;--bdr:#d4d1ca;--div:#dcd9d5;
+  --tx:#28251d;--txm:#7a7974;--txf:#bab9b4;--pri:#01696f;--prih:#0c4e54;
+  --ok:#437a22;--warn:#964219;--err:#a12c7b;
+  --fd:'Cabinet Grotesk',sans-serif;--fb:'General Sans',sans-serif;
+  --r4:1rem;--r3:.75rem;--r2:.5rem;--rf:9999px;
+  --sh:0 1px 2px oklch(.2 .01 80/.06);--shm:0 4px 12px oklch(.2 .01 80/.08);
+}
+[data-theme="dark"]{
+  --bg:#171614;--sur:#1c1b19;--sur2:#201f1d;--bdr:#393836;--div:#262523;
+  --tx:#cdccca;--txm:#979693;--txf:#5a5957;--pri:#4f98a3;--prih:#227f8b;
+  --ok:#6daa45;--warn:#bb653b;--err:#d163a7;
+  --sh:0 1px 2px oklch(0 0 0/.2);--shm:0 4px 12px oklch(0 0 0/.3);
+}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--fb);font-size:clamp(.9rem,.85rem + .25vw,1.05rem);background:var(--bg);color:var(--tx);line-height:1.65;min-height:100dvh}
+a{color:inherit;text-decoration:none}
+code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.lay{display:grid;grid-template-columns:280px 1fr;max-width:1440px;margin:0 auto;min-height:100dvh}
+.side{position:sticky;top:0;height:100dvh;padding:1.5rem;border-right:1px solid color-mix(in oklab,var(--tx) 12%,transparent);background:color-mix(in oklab,var(--sur) 88%,transparent);backdrop-filter:blur(16px);overflow-y:auto}
+.brand{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--pri),color-mix(in oklab,var(--pri) 35%,white));display:grid;place-items:center;color:#fff;box-shadow:var(--shm)}
+.brand h1{font-family:var(--fd);font-size:1.1rem;line-height:1.1}
+.brand p{font-size:.8rem;color:var(--txm)}
+.ctrl{display:flex;gap:.5rem;margin-bottom:1rem}
+.srch{flex:1;padding:.7rem .9rem;border-radius:var(--r3);border:1px solid color-mix(in oklab,var(--tx) 12%,transparent);background:var(--sur2);color:var(--tx);font-size:.85rem}
+.tgl{width:42px;border-radius:var(--r3);border:1px solid color-mix(in oklab,var(--tx) 12%,transparent);background:var(--sur2);cursor:pointer;display:grid;place-items:center}
+.nav{display:grid;gap:2px}
+.ng{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--txf);padding:.6rem .75rem .25rem;margin-top:.5rem}
+.nav a{padding:.5rem .75rem;border-radius:var(--r2);font-size:.82rem;color:var(--txm);display:block}
+.nav a:hover,.nav a.on{background:color-mix(in oklab,var(--pri) 10%,var(--sur));color:var(--tx)}
+.main{padding:2rem clamp(1rem,4vw,3rem) 5rem}
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;align-items:end;margin-bottom:2.5rem}
+.hcard{padding:clamp(1.5rem,4vw,2.5rem);background:radial-gradient(circle at top right,color-mix(in oklab,var(--pri) 14%,transparent),transparent 32%),var(--sur);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);border-radius:var(--r4);box-shadow:var(--sh)}
+.ey{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .7rem;border-radius:var(--rf);background:color-mix(in oklab,var(--pri) 12%,var(--sur2));color:var(--pri);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+.hcard h2{font-family:var(--fd);font-size:clamp(1.8rem,1rem+2vw,3rem);line-height:.95;margin-bottom:1rem}
+.hcard p{color:var(--txm);max-width:56ch}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+.pill{padding:.4rem .7rem;border-radius:var(--rf);background:var(--sur2);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);font-size:.8rem}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.sc{padding:1rem;background:var(--sur);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);border-radius:var(--r3);box-shadow:var(--sh)}
+.sc strong{display:block;font-family:var(--fd);font-size:1.6rem;line-height:1}
+.sc span{display:block;color:var(--txm);font-size:.8rem;margin-top:.4rem}
+.sec{margin-top:2.5rem;scroll-margin-top:2rem}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.sh h3{font-family:var(--fd);font-size:clamp(1.2rem,.9rem+1vw,1.8rem);line-height:1}
+.sh p{color:var(--txm);font-size:.85rem;max-width:58ch}
+.card{background:var(--sur);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);border-radius:var(--r4);box-shadow:var(--sh);padding:1.5rem}
+.call{padding:1rem 1.25rem;margin-bottom:1.25rem;background:linear-gradient(180deg,color-mix(in oklab,var(--warn) 10%,var(--sur)),var(--sur));border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);border-radius:var(--r3);box-shadow:var(--sh)}
+.call.info{background:linear-gradient(180deg,color-mix(in oklab,var(--pri) 10%,var(--sur)),var(--sur))}
+.call.ok{background:linear-gradient(180deg,color-mix(in oklab,var(--ok) 10%,var(--sur)),var(--sur))}
+.call strong{display:block;margin-bottom:.4rem;color:var(--warn)}
+.call.info strong{color:var(--pri)} .call.ok strong{color:var(--ok)}
+.tw{overflow:auto;background:var(--sur);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent);border-radius:var(--r3);box-shadow:var(--sh)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:.8rem .9rem;vertical-align:top;border-bottom:1px solid var(--div);text-align:left}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--txm);background:color-mix(in oklab,var(--sur2) 88%,transparent);position:sticky;top:0}
+tr:last-child td{border-bottom:none}
+.cw{overflow:auto;background:color-mix(in oklab,var(--sur2) 82%,black);padding:1rem 1.25rem;border-radius:var(--r3);margin-top:.75rem}
+pre{white-space:pre-wrap;word-break:break-word;font-size:.85rem;line-height:1.6;color:var(--tx)}
+.tag{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:var(--rf);font-size:.72rem;background:color-mix(in oklab,var(--pri) 14%,var(--sur));color:var(--pri)}
+.tag.w{background:color-mix(in oklab,var(--warn) 14%,var(--sur));color:var(--warn)}
+.tag.g{background:color-mix(in oklab,var(--ok) 14%,var(--sur));color:var(--ok)}
+.tag.r{background:color-mix(in oklab,var(--err) 14%,var(--sur));color:var(--err)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem}
+.mc{padding:1rem;border-radius:var(--r3);background:var(--sur2);border:1px solid color-mix(in oklab,var(--tx) 10%,transparent)}
+.mc h4{font-size:.9rem;margin-bottom:.3rem}
+.mc p{font-size:.8rem;color:var(--txm)}
+.mb{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--div)}
+.mb:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.msig{font-family:ui-monospace,Menlo,monospace;font-size:.83rem;color:var(--pri);background:color-mix(in oklab,var(--pri) 10%,var(--sur));padding:.18rem .5rem;border-radius:var(--r2);word-break:break-all}
+.mrt{font-size:.72rem;border-radius:var(--rf);padding:.15rem .5rem;border:1px solid color-mix(in oklab,var(--tx) 14%,transparent);color:var(--txm)}
+.mn{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem}
+.md{color:var(--txm);font-size:.83rem;margin-bottom:.6rem}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.ft{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--div);color:var(--txm);font-size:.82rem}
+.hid{display:none!important}
+mark{background:color-mix(in oklab,var(--warn) 28%,transparent);color:inherit;padding:0 .15em;border-radius:.25em}
+@media(max-width:1080px){.lay{grid-template-columns:1fr}.side{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--div)}.hero{grid-template-columns:1fr}.sg{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:720px){.main{padding:1.25rem 1rem 3rem}.sg,.g2,.g3{grid-template-columns:1fr}.hero{gap:1rem}.ctrl{flex-wrap:wrap}.tgl{height:44px}.srch{min-height:44px}}
+</style>
+</head>
+<body>
+<div class="lay">
+<aside class="side">
+  <div class="brand">
+    <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5h14"/><path d="M8 7.5V5.8A2.8 2.8 0 0 1 10.8 3h2.4A2.8 2.8 0 0 1 16 5.8v1.7"/><path d="M6.2 7.5l1.1 10.1A2 2 0 0 0 9.3 19.4h5.4a2 2 0 0 0 2-1.8l1.1-10.1"/><path d="M10 11.5h4"/></svg></div>
+    <div><h1>FunPay Tools API</h1><p>Полный Plugin API · v1.3.0.2</p></div>
+  </div>
+  <div class="ctrl">
+    <input id="srch" class="srch" type="search" placeholder="Поиск..."/>
+    <button class="tgl" id="tgl" aria-label="Тема"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+  </div>
+  <nav class="nav" id="nav">
+    <div class="ng">Введение</div>
+    <a href="#overview">Обзор</a>
+    <a href="#files">Файлы проекта</a>
+    <a href="#structure">Структура плагина</a>
+    <a href="#events">События</a>
+    <a href="#bridge">Kotlin Bridge (новый код)</a>
+
+    <div class="ng">Существующий API</div>
+    <a href="#chat">fpt.chat</a>
+    <a href="#orders">fpt.orders</a>
+    <a href="#lots">fpt.lots</a>
+    <a href="#users">fpt.users</a>
+    <a href="#autodelivery">fpt.autodelivery</a>
+    <a href="#dumper">fpt.dumper</a>
+    <a href="#support">fpt.support</a>
+    <a href="#settings">fpt.settings</a>
+    <a href="#accounts">fpt.accounts</a>
+    <a href="#network">fpt.network</a>
+    <a href="#app">fpt.app</a>
+    <a href="#ui">fpt.ui</a>
+    <a href="#storage">fpt.storage</a>
+    <a href="#ai">fpt.ai</a>
+
+    <div class="ng">Новый API (добавить)</div>
+    <a href="#license">fpt.license ★</a>
+    <a href="#theme">fpt.theme ★</a>
+    <a href="#backup">fpt.backup ★</a>
+    <a href="#widgets">fpt.widgets ★</a>
+    <a href="#concurrent">fpt.concurrent ★</a>
+    <a href="#gamechats">fpt.gamechats ★</a>
+    <a href="#service">fpt.service ★</a>
+    <a href="#log">fpt.log ★</a>
+    <a href="#placeholder">fpt.placeholder ★</a>
+    <a href="#autoticket">fpt.autoticket ★</a>
+    <a href="#reminder">fpt.reminder ★</a>
+    <a href="#epicnick">fpt.epicnick ★</a>
+
+    <div class="ng">Прочее</div>
+    <a href="#sdui">Server-Driven UI</a>
+    <a href="#canvas">Canvas → Image</a>
+    <a href="#limits">Лимиты</a>
+    <a href="#airules">Правила для ИИ</a>
+  </nav>
+</aside>
+<main class="main" id="content">
+
+<!-- HERO -->
+<section class="hero" id="overview" data-s="overview funpay tools plugin api">
+  <div class="hcard">
+    <span class="ey">Полный Plugin API · все файлы проекта</span>
+    <h2>FunPay Tools DAI</h2>
+    <p>Документация охватывает <strong>все 44 файла</strong> проекта. 14 существующих модулей из <code>Plugins.kt</code> + 12 новых модулей из остальных файлов. Включая полный доступ к лицензии, теме, бэкапам, сервису, логам и конкурентам.</p>
+    <div class="pills">
+      <span class="pill">14 существующих модулей</span>
+      <span class="pill">12 новых модулей ★</span>
+      <span class="pill">44 файла проекта</span>
+      <span class="pill">Kotlin Bridge + JS API</span>
+    </div>
+  </div>
+  <div class="sg">
+    <div class="sc"><strong>26</strong><span>модулей <code>fpt.*</code></span></div>
+    <div class="sc"><strong>44</strong><span>файла проекта</span></div>
+    <div class="sc"><strong>100+</strong><span>методов API</span></div>
+    <div class="sc"><strong>1</strong><span>JS-файл плагина</span></div>
+  </div>
+</section>
+
+<!-- FILES COVERAGE -->
+<section class="sec" id="files" data-s="файлы проекта покрытие">
+  <div class="sh"><div><h3>Файлы проекта и что добавлено в API</h3><p>Полный список всех .kt файлов и их вклад в Plugin API.</p></div><span class="tag g">Все файлы</span></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Файл</th><th>Что даёт в API</th><th>Модуль</th></tr></thead>
+      <tbody>
+        <tr><td><code>Plugins.kt</code></td><td>Весь существующий JS-bridge (<code>FPTJsBridge</code> + <code>API_BOOTSTRAP_JS</code>)</td><td><span class="tag">Все 14 модулей</span></td></tr>
+        <tr><td><code>FunPayRepository.kt</code></td><td>Реализация методов чата, заказов, лотов, продаж, настроек, <code>LogManager</code></td><td><span class="tag">chat/orders/lots/log</span></td></tr>
+        <tr><td><code>FunPayApi.kt</code></td><td>Retrofit-эндпоинты: runner, orders, lots, review, upload, rewriteText</td><td><span class="tag">network</span></td></tr>
+        <tr><td><code>LicenseManager.kt</code></td><td><code>isPro</code>, <code>getKey</code>, <code>aiClicksLeft</code>, <code>hasFeature</code>, <code>clearLicense</code>, <code>activateKey</code>, <code>deviceId</code>, <code>PremiumFeature</code> enum (13 значений)</td><td><span class="tag">fpt.license ★</span></td></tr>
+        <tr><td><code>ThemeManager.kt</code></td><td><code>AppTheme</code> (18 полей), <code>loadTheme</code>, <code>saveTheme</code>, <code>defaultThemes</code></td><td><span class="tag">fpt.theme ★</span></td></tr>
+        <tr><td><code>Backups.kt</code></td><td><code>BackupData</code>, <code>FullBackupSettings</code> (35 полей), <code>createBackup</code>, <code>exportBackup</code>, <code>importBackup</code>, <code>applyBackup</code></td><td><span class="tag">fpt.backup ★</span></td></tr>
+        <tr><td><code>Widgets.kt</code></td><td><code>WidgetManager</code>: <code>getTransparency</code>, <code>setTransparency</code>, <code>getProfileCache</code>, <code>updateAllWidgets</code></td><td><span class="tag">fpt.widgets ★</span></td></tr>
+        <tr><td><code>XD_Dumper.kt</code></td><td><code>DumperSettings</code>, <code>LiveFeedManager</code>, <code>fetchFunPayRate</code>, <code>fetchCategoryFilters</code></td><td><span class="tag">fpt.dumper / fpt.feed ★</span></td></tr>
+        <tr><td><code>ConcurentManager.kt</code></td><td><code>ConcurentSettings</code>, <code>getSettings</code>, <code>saveSettings</code>, <code>resetProgress</code>, <code>getDayStats</code></td><td><span class="tag">fpt.concurrent ★</span></td></tr>
+        <tr><td><code>GameChats.kt</code></td><td><code>GameChatsRegistry</code>: <code>getAll</code>, <code>search</code>, <code>byNodeId</code>, <code>isSystemChatId</code>, <code>grouped</code></td><td><span class="tag">fpt.gamechats ★</span></td></tr>
+        <tr><td><code>FpExtensions.kt</code></td><td><code>FpPlaceholders</code>: <code>applyChat</code>, <code>applyOrder</code>, <code>applyCombined</code>; переменные <code>$username</code>, <code>$date</code>, <code>$order_id</code> и т.д.</td><td><span class="tag">fpt.placeholder ★</span></td></tr>
+        <tr><td><code>AccountModels.kt</code></td><td><code>Account</code> (поля: goldenKey, phpSessionId, proxy*), <code>AutoTicketSettings</code>, <code>OrderReminderSettings</code></td><td><span class="tag">fpt.autoticket / fpt.reminder ★</span></td></tr>
+        <tr><td><code>EpicNicksManager.kt</code></td><td><code>EpicNickConfig</code>, <code>nicksMap</code> — градиентные ники донатеров</td><td><span class="tag">fpt.epicnick ★</span></td></tr>
+        <tr><td><code>FunPayService.kt</code></td><td>Фоновый сервис: рестарт, статус, управление WakeLock</td><td><span class="tag">fpt.service ★</span></td></tr>
+        <tr><td><code>FunPaySupport.kt</code></td><td><code>getCategories</code>, <code>getCategoryFields</code>, <code>closeTicket</code>, <code>uploadAttachment</code></td><td><span class="tag">fpt.support (расширено)</span></td></tr>
+        <tr><td><code>AutoGive.kt</code></td><td><code>AutoDeliverySettings</code>, <code>AutoDeliveryLot</code>, <code>checkAutoDelivery</code></td><td><span class="tag">fpt.autodelivery</span></td></tr>
+        <tr><td><code>Lots.kt</code></td><td><code>Lot</code>, <code>LotField</code>, <code>LotFieldsData</code>, <code>LotImage</code>, <code>BuyerPriceRow</code></td><td><span class="tag">fpt.lots</span></td></tr>
+        <tr><td><code>Profiles.kt</code></td><td><code>FunPayUserProfile</code>, <code>ProfileOffer</code>, <code>ProfileReview</code>, <code>getUserProfile</code></td><td><span class="tag">fpt.users</span></td></tr>
+        <tr><td><code>RMTHub.kt</code></td><td><code>RMTUserStats</code>, <code>RMTUser</code>, <code>fetchRMTHubStats</code></td><td><span class="tag">fpt.users.getRmtHub</span></td></tr>
+        <tr><td><code>Feed.kt</code></td><td>Лента отзывов: <code>fetchFeedFromBackend</code>, <code>submitReviewToFeed</code>, <code>reactToReview</code></td><td><span class="tag">fpt.feed ★</span></td></tr>
+        <tr><td><code>WatchdogDaemon.kt</code></td><td>Сторожевой демон — перезапускает сервис если убит</td><td><span class="tag">fpt.service</span></td></tr>
+        <tr><td><code>WatchdogWorker.kt</code></td><td>WorkManager-задача для фоновой работы</td><td><span class="tag">fpt.service</span></td></tr>
+        <tr><td><code>ZombieJobService.kt</code></td><td>JobScheduler-задача для выживания в фоне</td><td><span class="tag">fpt.service</span></td></tr>
+        <tr><td><code>AosModule.kt</code></td><td>Always On Screen — экран блокировки (UI-компоненты)</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>DesignSystem.kt</code></td><td>Цвета, типографика — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>ColorPicker.kt</code></td><td>Компонент выбора цвета — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>ThemeCustomizationScreen.kt</code></td><td>Экран кастомизации темы — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>ThemeSelectionScreen.kt</code></td><td>Выбор пресетов — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>WallpaperLayer.kt</code> / <code>WallpaperPalette.kt</code></td><td>Обои / палитра — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>ProfileScreen.kt</code></td><td>Экран профиля — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>SupportScreen.kt</code></td><td>Экран техподдержки — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>AccountsSelector.kt</code></td><td>Выбор аккаунта — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>SplashScreen.kt</code></td><td>Сплэш-экран — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>ConcurentDialog.kt</code></td><td>Диалог конкурентов — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>EpicNicknameText.kt</code></td><td>Compose-рендер градиентных ников — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>Ads.kt</code></td><td>Рекламные диалоги — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>GameChats.kt</code> (UI)</td><td>Compose-экраны для игровых чатов</td><td><span class="tag">fpt.gamechats ★</span></td></tr>
+        <tr><td><code>ISettings.kt</code></td><td>Экран настроек — только UI</td><td><span class="tag">UI only</span></td></tr>
+        <tr><td><code>MainActivity.kt</code></td><td>Главный экран, навигация, WebView для плагинов</td><td><span class="tag">core</span></td></tr>
+        <tr><td><code>BootReceiver.kt</code> / <code>ReplyReceiver.kt</code></td><td>Запуск при старте / быстрый ответ — системные</td><td><span class="tag">system</span></td></tr>
+        <tr><td><code>PhoenixReceiver.kt</code> / <code>ServiceStarter.kt</code></td><td>Перезапуск сервиса — системные</td><td><span class="tag">system</span></td></tr>
+        <tr><td><code>funpay_chats.json</code></td><td>База данных игровых чатов (3 500+ чатов)</td><td><span class="tag">fpt.gamechats ★</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- STRUCTURE -->
+<section class="sec" id="structure" data-s="структура плагин мета banner plugin_id plugin_slot_key">
+  <div class="sh"><div><h3>Структура плагина</h3><p>Единый <code>.js</code>-файл. Мета — в комментариях в самом начале.</p></div><span class="tag">Core</span></div>
+  <div class="card">
+    <div class="cw"><pre>// @name Название Плагина
+// @author Ваш Ник
+// @version 1.0
+// @description Описание плагина.
+// @banner https://funpay.tools/default-banner.jpeg
+
+// PLUGIN_ID и PLUGIN_SLOT_KEY доступны глобально — ядро их инжектирует.
+fpt.app.log("Плагин запущен. ID: " + PLUGIN_ID);</pre></div>
+    <div class="call" style="margin-top:1rem;margin-bottom:0"><strong>Запрещено</strong>
+      Нельзя объявлять <code>PLUGIN_ID</code>, <code>PLUGIN_SLOT_KEY</code>, вызывать <code>fpt.plugin.register()</code>, <code>fpt.init()</code>, использовать <code>fpt.config.*</code>, писать <code>while(true)</code>.
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="sec" id="events" data-s="события events onNewMessage onNewOrder onBalanceChanged">
+  <div class="sh"><div><h3>События <code>fpt.on()</code></h3><p>Системные события из нативного кода Android через <code>PluginEngine.dispatchEvent()</code>.</p></div><span class="tag">Events</span></div>
+  <div class="card">
+    <div class="tw"><table>
+      <thead><tr><th>Событие</th><th>Payload</th><th>Источник</th></tr></thead>
+      <tbody>
+        <tr><td><code>onNewMessage</code></td><td><code>{chatId,username,text,isMe}</code></td><td>FunPayService.kt</td></tr>
+        <tr><td><code>onNewOrder</code></td><td><code>{orderId,chatId,buyerName}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onOrderConfirmed</code></td><td><code>{orderId,status}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onOrderRefunded</code></td><td><code>{orderId,status}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onBalanceChanged</code></td><td><code>{oldBalance,newBalance,currency}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onLotSold</code></td><td><code>{lotId,lotTitle,buyerName,price}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onChatOpened</code></td><td><code>{chatId,username}</code></td><td>FunPayService.kt</td></tr>
+        <tr><td><code>onAccountSwitched</code></td><td><code>{accountId,username}</code></td><td>FunPayRepository.kt</td></tr>
+        <tr><td><code>onAppForeground</code></td><td><code>{}</code></td><td>MainActivity.kt</td></tr>
+        <tr><td><code>onAppBackground</code></td><td><code>{}</code></td><td>MainActivity.kt</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- KOTLIN BRIDGE — NEW CODE -->
+<section class="sec" id="bridge" data-s="kotlin bridge новый код добавить FPTJsBridge JavascriptInterface bootstrap">
+  <div class="sh"><div><h3>Kotlin Bridge — что добавить в проект</h3><p>Весь этот блок добавляется в класс <code>FPTJsBridge</code> в файле <code>Plugins.kt</code>, а JS-часть — в константу <code>API_BOOTSTRAP_JS</code>.</p></div><span class="tag w">Код для реализации</span></div>
+  <div class="card">
+    <div class="call info"><strong>Как добавить</strong>
+      1. В <code>FPTJsBridge</code> добавь все <code>@JavascriptInterface fun ...</code> методы.<br>
+      2. В <code>API_BOOTSTRAP_JS</code> в блок <code>window.fpt = { ... }</code> добавь новые объекты модулей.<br>
+      3. Пересобери проект.
+    </div>
+    <p style="margin-bottom:.75rem;color:var(--txm);font-size:.85rem">Kotlin-методы для добавления в <code>FPTJsBridge</code>:</p>
+    <div class="cw"><pre>// ============ LICENSE (LicenseManager.kt) ============
+@JavascriptInterface fun licenseIsPro(): Boolean = LicenseManager.isProActive()
+@JavascriptInterface fun licenseGetKey(): String = LicenseManager.currentKey
+@JavascriptInterface fun licenseGetExpiresAt(): Long =
+    (LicenseManager.licenseState as? LicenseState.Active)?.expiresAt ?: 0L
+@JavascriptInterface fun licenseGetState(): String = when (LicenseManager.licenseState) {
+    is LicenseState.Active -> "active"
+    is LicenseState.Revoked -> "revoked"
+    else -> "none"
+}
+@JavascriptInterface fun licenseAiClicksLeft(): Int = LicenseManager.aiClicksLeft()
+@JavascriptInterface fun licenseHasFeature(name: String): Boolean = try {
+    LicenseManager.hasAccess(PremiumFeature.valueOf(name))
+} catch (_: Exception) { false }
+@JavascriptInterface fun licenseGetDeviceId(): String = LicenseManager.deviceId()
+@JavascriptInterface fun licenseActivateKey(key: String) {
+    LicenseManager.activateKey(key) {}
+}
+@JavascriptInterface fun licenseClear() { LicenseManager.clearLicense() }
+@JavascriptInterface fun licenseApplyAdUnlock(name: String) {
+    try { LicenseManager.applyAdUnlock(PremiumFeature.valueOf(name)) } catch (_: Exception) {}
+}
+@JavascriptInterface fun licenseApplyAiBonus() { LicenseManager.applyAiAdBonus() }
+@JavascriptInterface fun licenseAdHoursLeft(name: String): Long = try {
+    LicenseManager.adUnlockHoursLeft(PremiumFeature.valueOf(name))
+} catch (_: Exception) { 0L }
+
+// ============ THEME (ThemeManager.kt) ============
+@JavascriptInterface fun themeLoad(): String =
+    try { gson.toJson(ThemeManager.loadTheme(context)) } catch (_: Exception) { "{}" }
+@JavascriptInterface fun themeSave(json: String) {
+    try { ThemeManager.saveTheme(context, gson.fromJson(json, AppTheme::class.java)) }
+    catch (_: Exception) {}
+}
+@JavascriptInterface fun themeGetDefaults(): String =
+    try { gson.toJson(ThemeManager.defaultThemes) } catch (_: Exception) { "[]" }
+
+// ============ BACKUP (Backups.kt) ============
+@JavascriptInterface fun backupExport(): String = ioBlocking(timeoutMs = 30_000L) {
+    try {
+        val b = BackupManager(context).createBackup(
+            repository, ThemeManager.loadTheme(context)
+        )
+        BackupManager(context).exportBackup(b)
+    } catch (e: Exception) { "" }
+}
+@JavascriptInterface fun backupImport(json: String): Boolean = try {
+    BackupManager(context).importBackup(json).isSuccess
+} catch (_: Exception) { false }
+
+// ============ WIDGETS (Widgets.kt) ============
+@JavascriptInterface fun widgetsGetTransparency(): Float = WidgetManager.getTransparency(context)
+@JavascriptInterface fun widgetsSetTransparency(value: Float) {
+    WidgetManager.setTransparency(context, value)
+}
+@JavascriptInterface fun widgetsUpdate() { WidgetManager.updateAllWidgets(context) }
+@JavascriptInterface fun widgetsGetProfileCache(): String =
+    try { gson.toJson(WidgetManager.getProfileCache(context)) } catch (_: Exception) { "null" }
+
+// ============ CONCURRENT (ConcurentManager.kt) ============
+@JavascriptInterface fun concurrentGetSettings(): String =
+    try { gson.toJson(ConcurentManager.getSettings(context)) } catch (_: Exception) { "{}" }
+@JavascriptInterface fun concurrentSaveSettings(json: String) {
+    try { ConcurentManager.saveSettings(context,
+        gson.fromJson(json, ConcurentSettings::class.java)) } catch (_: Exception) {}
+}
+@JavascriptInterface fun concurrentResetProgress() { ConcurentManager.resetProgress(context) }
+@JavascriptInterface fun concurrentGetDayStats(): String = try {
+    val s = ConcurentManager.getSettings(context)
+    val (posted, limit) = ConcurentManager.getDayStats(s)
+    "{\"posted\":$posted,\"limit\":$limit}"
+} catch (_: Exception) { "{}" }
+
+// ============ GAMECHATS (GameChats.kt) ============
+@JavascriptInterface fun gameChatsGetAll(): String =
+    try { gson.toJson(GameChatsRegistry.getAll(context)) } catch (_: Exception) { "[]" }
+@JavascriptInterface fun gameChatsSearch(query: String): String =
+    try { gson.toJson(GameChatsRegistry.search(context, query)) } catch (_: Exception) { "[]" }
+@JavascriptInterface fun gameChatsByNodeId(nodeId: String): String =
+    try { gson.toJson(GameChatsRegistry.byNodeId(context, nodeId)) } catch (_: Exception) { "null" }
+@JavascriptInterface fun gameChatsIsSystem(chatId: String): Boolean =
+    GameChatsRegistry.isSystemChatId(chatId)
+
+// ============ SERVICE (FunPayService.kt) ============
+@JavascriptInterface fun serviceRestart() {
+    try {
+        val i = android.content.Intent(context, FunPayService::class.java)
+        context.stopService(i)
+        context.startForegroundService(i)
+    } catch (_: Exception) {}
+}
+
+// ============ LOG (FunPayRepository.kt LogManager) ============
+@JavascriptInterface fun logGetAll(): String =
+    try { gson.toJson(LogManager.logs.value.map { it.first }) } catch (_: Exception) { "[]" }
+@JavascriptInterface fun logAdd(msg: String) {
+    LogManager.addLog("🧩 [PLUGIN]: ${msg.take(2000)}")
+}
+@JavascriptInterface fun logClear() {
+    // LogManager не имеет public clear — вызываем через рефлексию или добавляем метод
+    // Добавь в LogManager: fun clear() { _logs.value = emptyList() }
+}
+
+// ============ PLACEHOLDER (FpExtensions.kt) ============
+@JavascriptInterface fun placeholderApply(template: String, chatJson: String, orderJson: String): String = try {
+    val chat = gson.fromJson(chatJson, ChatItem::class.java)
+    val order = if (orderJson.isNotBlank())
+        gson.fromJson(orderJson, FpPlaceholders.OrderCtx::class.java) else null
+    FpPlaceholders.applyChat(template, chat, order)
+} catch (_: Exception) { template }
+
+// ============ AUTOTICKET (AccountModels.kt + FunPayRepository.kt) ============
+@JavascriptInterface fun autoTicketGetSettings(): String =
+    try { gson.toJson(repository.getAutoTicketSettings()) } catch (_: Exception) { "{}" }
+@JavascriptInterface fun autoTicketSaveSettings(json: String) {
+    try { repository.saveAutoTicketSettings(
+        gson.fromJson(json, AutoTicketSettings::class.java)) } catch (_: Exception) {}
+}
+@JavascriptInterface fun autoTicketRun(): String = ioBlocking(timeoutMs = 60_000L) {
+    try { gson.toJson(repository.sendAutoSupportTickets()) } catch (e: Exception) { "null" }
+}
+
+// ============ REMINDER (AccountModels.kt + FunPayRepository.kt) ============
+@JavascriptInterface fun reminderGetSettings(): String =
+    try { gson.toJson(repository.getOrderReminderSettings()) } catch (_: Exception) { "{}" }
+@JavascriptInterface fun reminderSaveSettings(json: String) {
+    try { repository.saveOrderReminderSettings(
+        gson.fromJson(json, OrderReminderSettings::class.java)) } catch (_: Exception) {}
+}
+@JavascriptInterface fun reminderGetPending(): String =
+    try { gson.toJson(repository.getPendingReminders()) } catch (_: Exception) { "[]" }
+
+// ============ EPICNICK (EpicNicksManager.kt) ============
+@JavascriptInterface fun epicNickGet(username: String): String =
+    try { gson.toJson(EpicNicksManager.nicksMap[username]) } catch (_: Exception) { "null" }
+@JavascriptInterface fun epicNickGetAll(): String =
+    try { gson.toJson(EpicNicksManager.nicksMap.toMap()) } catch (_: Exception) { "{}" }
+
+// ============ SUPPORT EXTENDED (FunPaySupport.kt) ============
+@JavascriptInterface fun supportGetCategories(): String = ioBlocking {
+    try { gson.toJson(FunPaySupport(repository).getCategories()) } catch (_: Exception) { "[]" }
+}
+@JavascriptInterface fun supportCloseTicket(id: String): Boolean = ioBlockingBool {
+    try { FunPaySupport(repository).closeTicket(id) } catch (_: Exception) { false }
+}
+@JavascriptInterface fun supportGetCategoryFields(catId: String): String = ioBlocking {
+    try { gson.toJson(FunPaySupport(repository).getCategoryFields(catId)) } catch (_: Exception) { "[]" }
+}</pre></div>
+    <p style="margin:.75rem 0;color:var(--txm);font-size:.85rem">JS-часть для добавления в <code>API_BOOTSTRAP_JS</code> (внутрь <code>window.fpt = { ... }</code>):</p>
+    <div class="cw"><pre>license: {
+    isPro: function() { return fptNative.licenseIsPro(); },
+    getKey: function() { return fptNative.licenseGetKey(); },
+    getExpiresAt: function() { return fptNative.licenseGetExpiresAt(); },
+    getState: function() { return fptNative.licenseGetState(); },
+    aiClicksLeft: function() { return fptNative.licenseAiClicksLeft(); },
+    hasFeature: function(name) { return fptNative.licenseHasFeature(name); },
+    getDeviceId: function() { return fptNative.licenseGetDeviceId(); },
+    activateKey: function(key) { return fptNative.licenseActivateKey(key); },
+    clear: function() { return fptNative.licenseClear(); },
+    applyAdUnlock: function(name) { return fptNative.licenseApplyAdUnlock(name); },
+    applyAiBonus: function() { return fptNative.licenseApplyAiBonus(); },
+    adHoursLeft: function(name) { return fptNative.licenseAdHoursLeft(name); }
+},
+theme: {
+    load: function() { return JSON.parse(fptNative.themeLoad() || '{}'); },
+    save: function(obj) { return fptNative.themeSave(JSON.stringify(obj)); },
+    getDefaults: function() { return JSON.parse(fptNative.themeGetDefaults() || '[]'); }
+},
+backup: {
+    export: function() { return fptNative.backupExport(); },
+    import: function(json) { return fptNative.backupImport(json); }
+},
+widgets: {
+    getTransparency: function() { return fptNative.widgetsGetTransparency(); },
+    setTransparency: function(v) { return fptNative.widgetsSetTransparency(v); },
+    update: function() { return fptNative.widgetsUpdate(); },
+    getProfileCache: function() { return JSON.parse(fptNative.widgetsGetProfileCache() || 'null'); }
+},
+concurrent: {
+    getSettings: function() { return JSON.parse(fptNative.concurrentGetSettings() || '{}'); },
+    saveSettings: function(s) { return fptNative.concurrentSaveSettings(JSON.stringify(s)); },
+    resetProgress: function() { return fptNative.concurrentResetProgress(); },
+    getDayStats: function() { return JSON.parse(fptNative.concurrentGetDayStats() || '{}'); }
+},
+gamechats: {
+    getAll: function() { return JSON.parse(fptNative.gameChatsGetAll() || '[]'); },
+    search: function(q) { return JSON.parse(fptNative.gameChatsSearch(q) || '[]'); },
+    byNodeId: function(id) { return JSON.parse(fptNative.gameChatsByNodeId(id) || 'null'); },
+    isSystem: function(id) { return fptNative.gameChatsIsSystem(id); }
+},
+service: {
+    restart: function() { return fptNative.serviceRestart(); }
+},
+log: {
+    getAll: function() { return JSON.parse(fptNative.logGetAll() || '[]'); },
+    add: function(msg) { return fptNative.logAdd(msg); }
+},
+placeholder: {
+    apply: function(template, chat, order) {
+        return fptNative.placeholderApply(
+            template,
+            JSON.stringify(chat || {}),
+            order ? JSON.stringify(order) : ''
+        );
+    }
+},
+autoticket: {
+    getSettings: function() { return JSON.parse(fptNative.autoTicketGetSettings() || '{}'); },
+    saveSettings: function(s) { return fptNative.autoTicketSaveSettings(JSON.stringify(s)); },
+    run: function() { return JSON.parse(fptNative.autoTicketRun() || 'null'); }
+},
+reminder: {
+    getSettings: function() { return JSON.parse(fptNative.reminderGetSettings() || '{}'); },
+    saveSettings: function(s) { return fptNative.reminderSaveSettings(JSON.stringify(s)); },
+    getPending: function() { return JSON.parse(fptNative.reminderGetPending() || '[]'); }
+},
+epicnick: {
+    get: function(username) { return JSON.parse(fptNative.epicNickGet(username) || 'null'); },
+    getAll: function() { return JSON.parse(fptNative.epicNickGetAll() || '{}'); }
+}</pre></div>
+  </div>
+</section>
+
+<!-- === EXISTING API === -->
+<section class="sec" id="chat" data-s="fpt.chat getList getHistory getInfo send sendWithImage markRead чат история">
+  <div class="sh"><div><h3>fpt.chat</h3><p>Чаты, история, отправка. Источник: <code>Plugins.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.chat.getList()</code></td><td>ChatItem[]</td><td>Все чаты. Поля: <code>id, username, lastMessage, isUnread, avatarUrl, date, activeLot</code></td></tr>
+      <tr><td><code>fpt.chat.getHistory(chatId)</code></td><td>MessageItem[]</td><td>История. Поля: <code>id, author, text, isMe, time, imageUrl, authorId, authorAvatarUrl</code></td></tr>
+      <tr><td><code>fpt.chat.getInfo(chatId)</code></td><td>ChatInfo|null</td><td>Инфо о собеседнике: <code>lookingAtLink, registrationDate, language, avatarUrl, userStatus</code></td></tr>
+      <tr><td><code>fpt.chat.resolveUserId(nodeId)</code></td><td>string</td><td>nodeId → числовой userId</td></tr>
+      <tr><td><code>fpt.chat.send(chatId, text)</code></td><td>boolean</td><td>Отправить текст (макс 2000 символов)</td></tr>
+      <tr><td><code>fpt.chat.sendWithImage(chatId, text, localUri, imgFirst)</code></td><td>boolean</td><td>Отправить с картинкой. <code>localUri</code> — от <code>fpt.app.saveBase64Image()</code></td></tr>
+      <tr><td><code>fpt.chat.markRead(chatId)</code></td><td>void</td><td>Пометить как прочитанное</td></tr>
+      <tr><td><code>fpt.create(userId, text)</code></td><td>boolean</td><td>Создать новый чат с пользователем</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="orders" data-s="fpt.orders getDetails confirm refund review заказы возврат отзыв">
+  <div class="sh"><div><h3>fpt.orders</h3><p>Заказы, возврат, отзывы. Источник: <code>Plugins.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.orders.getDetails(orderId)</code></td><td>OrderDetails|null</td><td>Поля: <code>id, status, gameTitle, price, buyerName, buyerId, canRefund, canConfirm, hasReview, reviewRating, reviewText, sellerReply, params, lotId, isBuyer</code></td></tr>
+      <tr><td><code>fpt.orders.confirm(orderId)</code></td><td>boolean</td><td>Подтвердить выполнение</td></tr>
+      <tr><td><code>fpt.orders.refund(orderId)</code></td><td>boolean</td><td>Вернуть средства</td></tr>
+      <tr><td><code>fpt.orders.review.reply(id, text, stars)</code></td><td>boolean</td><td>Ответить на отзыв покупателя</td></tr>
+      <tr><td><code>fpt.orders.review.write(id, text, stars)</code></td><td>boolean</td><td>Оставить свой отзыв (как покупатель)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="lots" data-s="fpt.lots getMy getFields raiseAll toggle delete changePrice copy лоты">
+  <div class="sh"><div><h3>fpt.lots</h3><p>Управление лотами. Источник: <code>Plugins.kt</code> + <code>Lots.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag">Plugins.kt + Lots.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.lots.getMy()</code></td><td>Lot[]</td><td>Мои лоты. Поля: <code>id, title, price, isActive, nodeId, gameId, imageUrl, description</code></td></tr>
+      <tr><td><code>fpt.lots.getFields(lotId)</code></td><td>LotFieldsData|null</td><td>Редактируемые поля лота + <code>csrfToken</code>. LotField: <code>label, value, type</code></td></tr>
+      <tr><td><code>fpt.lots.raiseAll()</code></td><td>void</td><td>Поднять все лоты (до 60 сек)</td></tr>
+      <tr><td><code>fpt.lots.toggle(lotId, active)</code></td><td>boolean</td><td>Вкл/выкл лот</td></tr>
+      <tr><td><code>fpt.lots.delete(lotId)</code></td><td>boolean</td><td>Удалить лот</td></tr>
+      <tr><td><code>fpt.lots.changePrice(lotId, newPrice)</code></td><td>boolean</td><td>Изменить цену. <code>newPrice</code> — float</td></tr>
+      <tr><td><code>fpt.lots.copy(lotId, targetNodeId)</code></td><td>object|null</td><td>Копировать лот. Пустая строка = та же категория</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="users" data-s="fpt.users getProfile getRmtHub getSales getOrdersWith setAvatar профиль">
+  <div class="sh"><div><h3>fpt.users</h3><p>Профиль, продажи, RMTHub. Источник: <code>Plugins.kt</code> + <code>Profiles.kt</code> + <code>RMTHub.kt</code></p></div><span class="tag">Plugins.kt + Profiles.kt + RMTHub.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.users.getProfile()</code></td><td>UserProfile|null</td><td>Профиль текущего аккаунта: ник, аватар, рейтинг, баланс, статистика. Источник: <code>Profiles.kt</code></td></tr>
+      <tr><td><code>fpt.users.getRmtHub(username)</code></td><td>RMTUserStats|null</td><td>Статистика с RMTHub. Источник: <code>RMTHub.kt</code>. Поля: <code>totalIncome, gamesCount, avgCheck, isBanned</code></td></tr>
+      <tr><td><code>fpt.users.getSales()</code></td><td>SaleItem[]</td><td>История продаж. Поля: <code>orderId, buyerName, price, date, status</code></td></tr>
+      <tr><td><code>fpt.users.getOrdersWith(username, isSales)</code></td><td>OrderSummaryItem[]</td><td>Заказы с конкретным пользователем</td></tr>
+      <tr><td><code>fpt.users.setAvatar(base64)</code></td><td>boolean</td><td>Установить аватар аккаунта (base64, макс 5 МБ)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="autodelivery" data-s="fpt.autodelivery getSettings saveSettings readFile автовыдача">
+  <div class="sh"><div><h3>fpt.autodelivery</h3><p>Автовыдача товаров. Источник: <code>Plugins.kt</code> + <code>AutoGive.kt</code></p></div><span class="tag">Plugins.kt + AutoGive.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.autodelivery.getSettings()</code></td><td>AutoDeliverySettings</td><td>Настройки. Поля из <code>AutoGive.kt</code>: <code>enabled, lots[], triggerWords[]</code></td></tr>
+      <tr><td><code>fpt.autodelivery.saveSettings(json)</code></td><td>void</td><td>Сохранить настройки</td></tr>
+      <tr><td><code>fpt.autodelivery.getFileCount(fileName)</code></td><td>number</td><td>Кол-во оставшихся товаров в файле</td></tr>
+      <tr><td><code>fpt.autodelivery.readFile(fileName)</code></td><td>string</td><td>Содержимое файла товаров</td></tr>
+      <tr><td><code>fpt.autodelivery.saveFile(fileName, content)</code></td><td>void</td><td>Записать файл товаров</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="dumper" data-s="fpt.dumper getSettings saveSettings runCycle демпер конкуренты">
+  <div class="sh"><div><h3>fpt.dumper</h3><p>XD Dumper — мониторинг цен конкурентов. Источник: <code>Plugins.kt</code> + <code>XD_Dumper.kt</code></p></div><span class="tag">Plugins.kt + XD_Dumper.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.dumper.getSettings()</code></td><td>DumperSettings</td><td>Настройки. Из <code>XD_Dumper.kt</code>: <code>DumperLotConfig[]</code> — lotId, minPrice, maxPrice, step, filterFields</td></tr>
+      <tr><td><code>fpt.dumper.saveSettings(json)</code></td><td>void</td><td>Сохранить настройки</td></tr>
+      <tr><td><code>fpt.dumper.runCycle()</code></td><td>void</td><td>Запустить цикл демпера вручную (до 120 сек)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="support" data-s="fpt.support getTickets getDetails create reply close categories техподдержка">
+  <div class="sh"><div><h3>fpt.support</h3><p>Техподдержка FunPay. Источник: <code>Plugins.kt</code> + <code>FunPaySupport.kt</code> (расширено)</p></div><span class="tag">Plugins.kt + FunPaySupport.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.support.getTickets()</code></td><td>SupportTicket[]</td><td>Список тикетов. Поля: <code>id, subject, status, date, unreadCount</code></td></tr>
+      <tr><td><code>fpt.support.getDetails(id)</code></td><td>TicketDetails|null</td><td>Детали тикета с историей. Поля: <code>comments[], attachments[], fields[]</code></td></tr>
+      <tr><td><code>fpt.support.create(catId, fieldsJson, msg)</code></td><td>string</td><td>Создать тикет. Возвращает ID</td></tr>
+      <tr><td><code>fpt.support.reply(id, msg)</code></td><td>boolean</td><td>Ответить в тикет</td></tr>
+      <tr><td><code>fpt.support.getCategories()</code></td><td>TicketCategory[]</td><td>★ Новое. Категории обращений. Поля: <code>id, name, fields[]</code></td></tr>
+      <tr><td><code>fpt.support.closeTicket(id)</code></td><td>boolean</td><td>★ Новое. Закрыть тикет</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="settings" data-s="fpt.settings getFolders getLabels getBusyMode getCommands getTemplates папки метки занятость">
+  <div class="sh"><div><h3>fpt.settings</h3><p>Все настройки приложения. Источник: <code>Plugins.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.settings.getFolders()</code> / <code>saveFolders(json)</code></td><td>Папки чатов</td></tr>
+      <tr><td><code>fpt.settings.getLabels()</code> / <code>saveLabels(json)</code></td><td>Цветные метки</td></tr>
+      <tr><td><code>fpt.settings.getChatLabels()</code> / <code>saveChatLabels(json)</code></td><td>Привязка меток к чатам (map chatId→string[])</td></tr>
+      <tr><td><code>fpt.settings.getBusyMode()</code> / <code>saveBusyMode(json)</code></td><td>Режим занятости. Из <code>FunPayRepository.kt</code>: enabled, message, imageUri</td></tr>
+      <tr><td><code>fpt.settings.getCommands()</code> / <code>saveCommands(json)</code></td><td>Авто-команды. <code>AutoResponseCommand</code>: trigger, response, exactMatch, caseSensitive, callMode</td></tr>
+      <tr><td><code>fpt.settings.getTemplates()</code> / <code>saveTemplates(json)</code></td><td>Шаблоны сообщений. <code>MessageTemplate</code>: id, name, text, imageUri, imageFirst</td></tr>
+      <tr><td><code>fpt.settings.getReminders()</code> / <code>saveReminders(json)</code></td><td>Напоминания по заказам. <code>PendingOrderReminder</code>: orderId, chatId, buyerName, remindAt</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="accounts" data-s="fpt.accounts getAll getActive switch мультиаккаунт">
+  <div class="sh"><div><h3>fpt.accounts</h3><p>Мультиаккаунт. Источник: <code>Plugins.kt</code> + <code>AccountModels.kt</code></p></div><span class="tag">Plugins.kt + AccountModels.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.accounts.getAll()</code></td><td>Account[]</td><td>Все аккаунты. <code>Account</code> из <code>AccountModels.kt</code>: <code>id, username, userId, avatarUrl, isActive, goldenKey, phpSessionId, proxyType, proxyHost, proxyPort</code></td></tr>
+      <tr><td><code>fpt.accounts.getActive()</code></td><td>Account|null</td><td>Активный аккаунт с полными данными</td></tr>
+      <tr><td><code>fpt.accounts.switch(id)</code></td><td>void</td><td>Переключить аккаунт</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="network" data-s="fpt.network get post fetchImageBase64 http запросы cloudflare">
+  <div class="sh"><div><h3>fpt.network</h3><p>HTTP через OkHttp с cookies текущего аккаунта. Источник: <code>Plugins.kt</code> + <code>FunPayApi.kt</code></p></div><span class="tag">Plugins.kt + FunPayApi.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.network.get(url, headersJson)</code></td><td><code>{status, body}</code>|null</td><td>GET с сессионными cookies FunPay</td></tr>
+      <tr><td><code>fpt.network.post(url, body, headersJson)</code></td><td><code>{status, body}</code>|null</td><td>POST запрос</td></tr>
+      <tr><td><code>fpt.network.fetchImageBase64(url)</code></td><td>string</td><td>Скачать изображение как base64 data URL (обход CORS)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="app" data-s="fpt.app toast notify vibrate log updateWidgets saveBase64Image">
+  <div class="sh"><div><h3>fpt.app</h3><p>Системные функции. Источник: <code>Plugins.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.app.toast(msg)</code></td><td>void</td><td>Всплывающее сообщение</td></tr>
+      <tr><td><code>fpt.app.notify(title, msg)</code></td><td>void</td><td>Android-уведомление</td></tr>
+      <tr><td><code>fpt.app.vibrate(ms)</code></td><td>void</td><td>Вибрация N миллисекунд</td></tr>
+      <tr><td><code>fpt.app.log(msg)</code></td><td>void</td><td>Запись в консоль плагина (макс 2000 симв)</td></tr>
+      <tr><td><code>fpt.app.updateWidgets()</code></td><td>void</td><td>Обновить виджеты рабочего стола</td></tr>
+      <tr><td><code>fpt.app.saveBase64Image(b64)</code></td><td>string|null</td><td>Base64 → локальный URI для sendWithImage</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="ui" data-s="fpt.ui setSlot removeSlot getState setState PLUGIN_SLOT_KEY интерфейс">
+  <div class="sh"><div><h3>fpt.ui</h3><p>Server-Driven UI. Источник: <code>Plugins.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.ui.setSlot(PLUGIN_SLOT_KEY, uiObj)</code></td><td>Рендерить UI в карточке плагина. Используй только <code>PLUGIN_SLOT_KEY</code></td></tr>
+      <tr><td><code>fpt.ui.removeSlot(PLUGIN_SLOT_KEY)</code></td><td>Убрать UI</td></tr>
+      <tr><td><code>fpt.ui.getState(key)</code></td><td>Прочитать значение из стейта компонента (всегда string)</td></tr>
+      <tr><td><code>fpt.ui.setState(key, value)</code></td><td>Записать в стейт. После — вызвать <code>setSlot()</code> для перерисовки</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="storage" data-s="fpt.storage get set хранилище SharedPreferences">
+  <div class="sh"><div><h3>fpt.storage</h3><p>Изолированное хранилище плагина. Источник: <code>Plugins.kt</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.storage.get(key)</code></td><td>string|null</td><td>Читать значение (null если нет)</td></tr>
+      <tr><td><code>fpt.storage.set(key, value)</code></td><td>void</td><td>Записать. Для объектов — <code>JSON.stringify()</code></td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>fpt.storage.set("count", String(parseInt(fpt.storage.get("count") || "0") + 1));
+fpt.storage.set("cfg", JSON.stringify({ enabled: true, delay: 5 }));
+var cfg = JSON.parse(fpt.storage.get("cfg") || "{}");</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="ai" data-s="fpt.ai ask rewrite translate нейросеть ИИ">
+  <div class="sh"><div><h3>fpt.ai</h3><p>ИИ-ассистент через <code>fptools.onrender.com/api/ai</code>. Источник: <code>Plugins.kt</code> + <code>FunPayRepository.rewriteMessage()</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.ai.ask(prompt)</code></td><td>string</td><td>Свободный вопрос нейросети</td></tr>
+      <tr><td><code>fpt.ai.rewrite(text, context)</code></td><td>string</td><td>Переписать текст в профессиональном стиле</td></tr>
+      <tr><td><code>fpt.ai.translate(text)</code></td><td>string</td><td>Перевести на русский</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- === NEW API === -->
+<section class="sec" id="license" data-s="fpt.license isPro getKey getState aiClicksLeft hasFeature clearLicense activateKey лицензия">
+  <div class="sh"><div><h3>fpt.license ★</h3><p>Полное управление лицензией. Источник: <code>LicenseManager.kt</code></p></div><span class="tag w">Новый · LicenseManager.kt</span></div>
+  <div class="card">
+    <div class="call info"><strong>PremiumFeature — имена для hasFeature()</strong>
+      <code>LOTS</code>, <code>MULTI_ACCOUNT</code>, <code>WIDGET_PROFILE</code>, <code>RMTHUB</code>, <code>REVIEW_AI</code>, <code>AUTO_REFUND</code>, <code>REVIEW_REQUEST</code>, <code>XD_DUMPER</code>, <code>AI_VARIABLES</code>, <code>CONCURENT</code>, <code>AUTO_TICKET</code>, <code>AUTO_DELIVERY</code>, <code>AOS</code>
+    </div>
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.license.isPro()</code></td><td>boolean</td><td>Активна ли подписка прямо сейчас</td></tr>
+      <tr><td><code>fpt.license.getKey()</code></td><td>string</td><td>Текущий лицензионный ключ (<code>LicenseManager.currentKey</code>)</td></tr>
+      <tr><td><code>fpt.license.getState()</code></td><td>"active"|"revoked"|"none"</td><td>Состояние лицензии</td></tr>
+      <tr><td><code>fpt.license.getExpiresAt()</code></td><td>number</td><td>Unix timestamp окончания (0 = бессрочно)</td></tr>
+      <tr><td><code>fpt.license.aiClicksLeft()</code></td><td>number</td><td>Оставшиеся AI-запросы сегодня (AI_FREE_DAILY=25)</td></tr>
+      <tr><td><code>fpt.license.hasFeature(name)</code></td><td>boolean</td><td>Доступна ли фича (isPro ИЛИ adUnlocked)</td></tr>
+      <tr><td><code>fpt.license.getDeviceId()</code></td><td>string</td><td>Android ID устройства</td></tr>
+      <tr><td><code>fpt.license.activateKey(key)</code></td><td>void</td><td>Активировать ключ через Firebase</td></tr>
+      <tr><td><code>fpt.license.clear()</code></td><td>void</td><td>Сбросить лицензию — очищает SharedPrefs и ставит state=none</td></tr>
+      <tr><td><code>fpt.license.applyAdUnlock(feature)</code></td><td>void</td><td>Разблокировать фичу через рекламу (на 48ч)</td></tr>
+      <tr><td><code>fpt.license.applyAiBonus()</code></td><td>void</td><td>Добавить +25 AI-кликов сегодня</td></tr>
+      <tr><td><code>fpt.license.adHoursLeft(feature)</code></td><td>number</td><td>Часов до конца ad-unlock</td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>// Пример: читаем состояние лицензии
+var state = fpt.license.getState();
+var key = fpt.license.getKey();
+var ai = fpt.license.aiClicksLeft();
+fpt.app.log("Статус: " + state + " | Ключ: " + key + " | AI: " + ai);
+
+// Проверить фичу
+if (!fpt.license.hasFeature("XD_DUMPER")) {
+    fpt.license.applyAdUnlock("XD_DUMPER");
+}
+
+// Сброс лицензии для теста
+// fpt.license.clear();</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="theme" data-s="fpt.theme load save getDefaults тема цвета AppTheme">
+  <div class="sh"><div><h3>fpt.theme ★</h3><p>Полный контроль темы приложения. Источник: <code>ThemeManager.kt</code></p></div><span class="tag w">Новый · ThemeManager.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.theme.load()</code></td><td>AppTheme</td><td>Текущая тема. Поля: <code>name, primaryColor, secondaryColor, backgroundColor, surfaceColor, textPrimaryColor, textSecondaryColor, accentColor, isAmoled, containerOpacity, borderRadius, useWallpaper, wallpaperPath, wallpaperAlpha, wallpaperDim, wallpaperBlur, wallpaperEffect, parallaxIntensity</code></td></tr>
+      <tr><td><code>fpt.theme.save(themeObj)</code></td><td>void</td><td>Записать тему. Передай изменённый объект от <code>load()</code></td></tr>
+      <tr><td><code>fpt.theme.getDefaults()</code></td><td>AppTheme[]</td><td>Список встроенных пресетов из <code>ThemeManager.defaultThemes</code></td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>// Сделать тему AMOLED с синим акцентом
+var theme = fpt.theme.load();
+theme.isAmoled = true;
+theme.backgroundColor = "#000000";
+theme.accentColor = "#0088ff";
+theme.primaryColor = "#0077ee";
+fpt.theme.save(theme);
+fpt.app.toast("Тема применена!");</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="backup" data-s="fpt.backup export import бэкап экспорт импорт">
+  <div class="sh"><div><h3>fpt.backup ★</h3><p>Экспорт/импорт всех настроек. Источник: <code>Backups.kt</code></p></div><span class="tag w">Новый · Backups.kt</span></div>
+  <div class="card">
+    <div class="call info"><strong>BackupData содержит 35 полей</strong>
+      Аккаунты, тема, автоответы, шаблоны, папки, метки, режим занятости, демпер, тикеты, напоминания, автовыдача, конкурент, лоты, плагины и т.д. Полный состав — <code>FullBackupSettings</code> в <code>Backups.kt</code>.
+    </div>
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.backup.export()</code></td><td>string</td><td>Создать и экспортировать бэкап в JSON (до 30 сек)</td></tr>
+      <tr><td><code>fpt.backup.import(json)</code></td><td>boolean</td><td>Импортировать бэкап из JSON-строки</td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>// Экспорт и сохранение в хранилище плагина
+var json = fpt.backup.export();
+fpt.storage.set("last_backup", json);
+fpt.app.toast("Бэкап сохранён (" + json.length + " байт)");
+
+// Восстановление
+var saved = fpt.storage.get("last_backup");
+if (saved) fpt.backup.import(saved);</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="widgets" data-s="fpt.widgets getTransparency setTransparency update виджеты рабочий стол">
+  <div class="sh"><div><h3>fpt.widgets ★</h3><p>Управление виджетами рабочего стола. Источник: <code>Widgets.kt</code></p></div><span class="tag w">Новый · Widgets.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.widgets.getTransparency()</code></td><td>number (0–1)</td><td>Текущая прозрачность виджета</td></tr>
+      <tr><td><code>fpt.widgets.setTransparency(value)</code></td><td>void</td><td>Установить прозрачность (0.0–1.0)</td></tr>
+      <tr><td><code>fpt.widgets.update()</code></td><td>void</td><td>Принудительно обновить все виджеты</td></tr>
+      <tr><td><code>fpt.widgets.getProfileCache()</code></td><td>UserProfile|null</td><td>Кэшированный профиль для виджета</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="concurrent" data-s="fpt.concurrent getSettings saveSettings resetProgress getDayStats конкурент">
+  <div class="sh"><div><h3>fpt.concurrent ★</h3><p>Concurent — авто-сообщения в чаты конкурентов. Источник: <code>ConcurentManager.kt</code></p></div><span class="tag w">Новый · ConcurentManager.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.concurrent.getSettings()</code></td><td>ConcurentSettings</td><td>Настройки. Поля из <code>ConcurentManager.kt</code>: <code>enabled, games[], messages[], intervalSec, quietHoursStart, quietHoursEnd, nextPostAt, totalPostedToday, dailyLimit</code></td></tr>
+      <tr><td><code>fpt.concurrent.saveSettings(s)</code></td><td>void</td><td>Сохранить настройки</td></tr>
+      <tr><td><code>fpt.concurrent.resetProgress()</code></td><td>void</td><td>Сбросить счётчик за сегодня и <code>nextPostAt</code></td></tr>
+      <tr><td><code>fpt.concurrent.getDayStats()</code></td><td><code>{posted, limit}</code></td><td>Сколько отправлено сегодня и лимит</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="gamechats" data-s="fpt.gamechats getAll search byNodeId isSystem игровые чаты база данных">
+  <div class="sh"><div><h3>fpt.gamechats ★</h3><p>База игровых чатов FunPay (3500+ записей). Источник: <code>GameChats.kt</code> + <code>funpay_chats.json</code></p></div><span class="tag w">Новый · GameChats.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.gamechats.getAll()</code></td><td>GameChat[]</td><td>Все игровые чаты. Поля: <code>nodeId, name, gameId, gameName, category, avatarUrl</code></td></tr>
+      <tr><td><code>fpt.gamechats.search(query)</code></td><td>GameChat[]</td><td>Поиск по названию (транслитерация поддерживается)</td></tr>
+      <tr><td><code>fpt.gamechats.byNodeId(nodeId)</code></td><td>GameChat|null</td><td>Найти чат по nodeId</td></tr>
+      <tr><td><code>fpt.gamechats.isSystem(chatId)</code></td><td>boolean</td><td>Это системный чат FunPay (не пользователь)?</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="service" data-s="fpt.service restart сервис фоновый перезапуск">
+  <div class="sh"><div><h3>fpt.service ★</h3><p>Управление фоновым сервисом. Источник: <code>FunPayService.kt</code> + <code>WatchdogDaemon.kt</code></p></div><span class="tag w">Новый · FunPayService.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.service.restart()</code></td><td>Остановить и запустить <code>FunPayService</code> заново (stopService + startForegroundService)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="log" data-s="fpt.log getAll add логи консоль">
+  <div class="sh"><div><h3>fpt.log ★</h3><p>Доступ к системным логам приложения. Источник: <code>FunPayRepository.kt → LogManager</code></p></div><span class="tag w">Новый · LogManager</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.log.getAll()</code></td><td>string[]</td><td>Все логи приложения (макс 5000 записей, формат "[HH:mm:ss] text")</td></tr>
+      <tr><td><code>fpt.log.add(msg)</code></td><td>void</td><td>Добавить запись в лог (отображается в консоли приложения)</td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>// Прочитать последние 10 записей лога
+var logs = fpt.log.getAll();
+var recent = logs.slice(0, 10);
+fpt.app.log("Последние логи: " + JSON.stringify(recent));</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="placeholder" data-s="fpt.placeholder apply template variables username date order_id переменные шаблоны">
+  <div class="sh"><div><h3>fpt.placeholder ★</h3><p>Подстановка переменных в шаблоны сообщений. Источник: <code>FpExtensions.kt → FpPlaceholders</code></p></div><span class="tag w">Новый · FpExtensions.kt</span></div>
+  <div class="card">
+    <div class="tw" style="margin-bottom:.75rem"><table><thead><tr><th>Переменная</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>$username</code></td><td>Ник пользователя в чате</td></tr>
+      <tr><td><code>$date</code></td><td>Дата в формате dd.MM.yyyy</td></tr>
+      <tr><td><code>$date_text</code></td><td>Дата текстом: "15 января"</td></tr>
+      <tr><td><code>$full_date</code></td><td>"15 января 2026 года"</td></tr>
+      <tr><td><code>$time</code></td><td>Время HH:mm</td></tr>
+      <tr><td><code>$chat_id</code></td><td>ID чата</td></tr>
+      <tr><td><code>$message_text</code></td><td>Текст входящего сообщения</td></tr>
+      <tr><td><code>$order_id</code></td><td>ID заказа (если есть OrderCtx)</td></tr>
+      <tr><td><code>$lot_name</code></td><td>Название лота</td></tr>
+      <tr><td><code>$game</code></td><td>Название игры</td></tr>
+      <tr><td><code>$buyer_username</code></td><td>Ник покупателя</td></tr>
+    </tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.placeholder.apply(template, chat, order)</code></td><td>Применить переменные к шаблону. <code>chat</code> — объект ChatItem, <code>order</code> — опциональный OrderCtx</td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>fpt.on("onNewMessage", function(data) {
+    if (data.isMe) return;
+    var template = "Привет, $username! Сегодня $date_text.";
+    var chat = fpt.chat.getList().find(function(c) { return c.id === data.chatId; });
+    if (chat) {
+        var msg = fpt.placeholder.apply(template, chat, null);
+        fpt.chat.send(data.chatId, msg);
+    }
+});</pre></div>
+  </div>
+</section>
+
+<section class="sec" id="autoticket" data-s="fpt.autoticket getSettings saveSettings run автотикет техподдержка">
+  <div class="sh"><div><h3>fpt.autoticket ★</h3><p>Автоматические обращения в техподдержку FunPay. Источник: <code>AccountModels.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag w">Новый · AccountModels.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.autoticket.getSettings()</code></td><td>AutoTicketSettings</td><td>Настройки. Поля: <code>enabled, orderAgeHours, maxOrdersPerTicket, dailyLimit, autoIntervalHours, sentOrderIds, ticketsToday, todayDate, lastRunAt</code></td></tr>
+      <tr><td><code>fpt.autoticket.saveSettings(s)</code></td><td>void</td><td>Сохранить настройки</td></tr>
+      <tr><td><code>fpt.autoticket.run()</code></td><td>AutoTicketResult</td><td>Запустить цикл вручную. Возвращает <code>{ticketsCreated, ordersProcessed, errorMessage}</code></td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="reminder" data-s="fpt.reminder getSettings saveSettings напоминания заказы">
+  <div class="sh"><div><h3>fpt.reminder ★</h3><p>Напоминания о неподтверждённых заказах. Источник: <code>AccountModels.kt</code> + <code>FunPayRepository.kt</code></p></div><span class="tag w">Новый · AccountModels.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.reminder.getSettings()</code></td><td>OrderReminderSettings</td><td>Настройки. Поля: <code>enabled, delayHours, message</code>. Переменные в message: <code>$username</code></td></tr>
+      <tr><td><code>fpt.reminder.saveSettings(s)</code></td><td>void</td><td>Сохранить настройки</td></tr>
+      <tr><td><code>fpt.reminder.getPending()</code></td><td>PendingOrderReminder[]</td><td>Очередь напоминаний. Поля: <code>orderId, chatId, buyerName, placedAt, remindAt</code></td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="sec" id="epicnick" data-s="fpt.epicnick get getAll градиентные ники донатеры">
+  <div class="sh"><div><h3>fpt.epicnick ★</h3><p>Градиентные ники донатеров. Источник: <code>EpicNicksManager.kt</code></p></div><span class="tag w">Новый · EpicNicksManager.kt</span></div>
+  <div class="card">
+    <div class="tw"><table><thead><tr><th>Метод</th><th>Возвращает</th><th>Описание</th></tr></thead><tbody>
+      <tr><td><code>fpt.epicnick.get(username)</code></td><td>EpicNickConfig|null</td><td>Конфиг ника пользователя. Поля: <code>c1, c2, c3</code> (цвета HEX), <code>ang</code> (угол), <code>scl</code> (масштаб), <code>spd</code> (скорость), <code>an[]</code> (анимации), <code>ov</code> (оверлей), <code>pc</code></td></tr>
+      <tr><td><code>fpt.epicnick.getAll()</code></td><td>object</td><td>Map username→EpicNickConfig для всех донатеров (загружается с <code>funpay.tools/api/donaters/</code>)</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- SDUI -->
+<section class="sec" id="sdui" data-s="server driven ui компоненты Column Row Text Button Switch Checkbox Input Slider Card">
+  <div class="sh"><div><h3>Server-Driven UI — компоненты</h3><p>Все компоненты для <code>fpt.ui.setSlot()</code>. Источник: <code>Plugins.kt → RenderNode()</code></p></div><span class="tag">Plugins.kt</span></div>
+  <div class="card">
+    <div class="call"><strong>3 правила</strong>
+      1. Все callback-функции — через <code>window.myFn = function(){}</code>.<br>
+      2. Для <code>Input</code> всегда <code>singleLine: true</code>.<br>
+      3. После <code>setState()</code> — повторный <code>setSlot()</code> для перерисовки.
+    </div>
+    <div class="tw" style="margin-bottom:.75rem"><table><thead><tr><th>Компонент</th><th>Обязательные поля</th><th>Опциональные</th></tr></thead><tbody>
+      <tr><td><code>Column</code> / <code>Row</code></td><td><code>children: []</code></td><td><code>padding, spacing</code></td></tr>
+      <tr><td><code>Text</code></td><td><code>text: string</code></td><td><code>color, bold, fontSize</code></td></tr>
+      <tr><td><code>Button</code></td><td><code>text, onClick: "window.fn()"</code></td><td><code>color</code></td></tr>
+      <tr><td><code>Switch</code> / <code>Checkbox</code></td><td><code>stateKey: string</code></td><td><code>text, onChange: "window.fn()"</code></td></tr>
+      <tr><td><code>Input</code></td><td><code>stateKey, singleLine: true</code></td><td><code>label, onChange: "window.fn()"</code></td></tr>
+      <tr><td><code>Slider</code></td><td><code>stateKey, min, max</code></td><td><code>onChange: "window.fn()"</code></td></tr>
+      <tr><td><code>Card</code></td><td><code>children: []</code></td><td><code>padding</code></td></tr>
+      <tr><td><code>Image</code></td><td><code>url: string</code></td><td><code>width, height</code></td></tr>
+      <tr><td><code>Spacer</code></td><td>—</td><td><code>size: number</code></td></tr>
+      <tr><td><code>Divider</code></td><td>—</td><td>—</td></tr>
+    </tbody></table></div>
+    <div class="cw"><pre>function render() {
+    fpt.ui.setSlot(PLUGIN_SLOT_KEY, {
+        type: "Card",
+        children: [
+            { type: "Text", text: "Мой плагин", bold: true, fontSize: 16.0 },
+            { type: "Spacer", size: 8 },
+            { type: "Input", stateKey: "apiUrl", label: "URL сервера", singleLine: true },
+            { type: "Switch", text: "Включить", stateKey: "enabled", onChange: "window.onToggle()" },
+            { type: "Spacer", size: 12 },
+            { type: "Button", text: "Сохранить", onClick: "window.save()" }
+        ]
+    });
+}
+window.onToggle = function() { fpt.app.toast(fpt.ui.getState("enabled")); };
+window.save = function() {
+    fpt.storage.set("url", fpt.ui.getState("apiUrl"));
+    fpt.storage.set("on", fpt.ui.getState("enabled"));
+    fpt.app.toast("Сохранено!");
+    render();
+};
+render();</pre></div>
+  </div>
+</section>
+
+<!-- CANVAS -->
+<section class="sec" id="canvas" data-s="canvas image fetchImageBase64 saveBase64Image sendWithImage">
+  <div class="sh"><div><h3>Canvas → Image</h3><p>Генерация и отправка картинок через WebView Canvas.</p></div><span class="tag r">Строгий порядок</span></div>
+  <div class="card">
+    <div class="call"><strong>Обязательная цепочка</strong>
+      <code>fetchImageBase64(url)</code> → установить <code>img.src</code> → нарисовать на Canvas → <code>canvas.toDataURL()</code> → <code>saveBase64Image()</code> → <code>sendWithImage()</code>
+    </div>
+    <div class="cw"><pre>var b64 = fpt.network.fetchImageBase64("https://example.com/img.png");
+var img = new Image();
+img.onload = function() {
+    var c = document.createElement("canvas");
+    c.width = 400; c.height = 200;
+    var ctx = c.getContext("2d");
+    ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0, 0, 400, 200);
+    ctx.drawImage(img, 10, 50, 100, 100);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 24px sans-serif";
+    ctx.fillText("Привет!", 130, 110);
+    var uri = fpt.app.saveBase64Image(c.toDataURL("image/png"));
+    if (uri) fpt.chat.sendWithImage("chat_id_here", "Картинка", uri, true);
+};
+img.src = b64;</pre></div>
+  </div>
+</section>
+
+<!-- LIMITS -->
+<section class="sec" id="limits" data-s="лимиты ограничения 2000 символов 20 переносов">
+  <div class="sh"><div><h3>Лимиты платформы</h3></div><span class="tag">FunPay limits</span></div>
+  <div class="tw"><table><thead><tr><th>Ограничение</th><th>Значение</th></tr></thead><tbody>
+    <tr><td>Макс. символов в сообщении</td><td><strong>2 000</strong></td></tr>
+    <tr><td>Макс. переносов строки</td><td><strong>20</strong></td></tr>
+    <tr><td>Макс. длина одного слова</td><td><strong>160 символов</strong></td></tr>
+    <tr><td>Форматирование</td><td>Только чистый текст — никакого Markdown, HTML</td></tr>
+    <tr><td>Размер плагина</td><td><strong>5 МБ</strong> (ограничение в <code>Plugins.kt → MAX_PLUGIN_SIZE</code>)</td></tr>
+    <tr><td>AI-запросы бесплатно</td><td><strong>25 / день</strong> (<code>LicenseManager.AI_FREE_DAILY</code>)</td></tr>
+    <tr><td>Ad-bonus AI</td><td><strong>+25</strong> (<code>LicenseManager.AI_AD_BONUS</code>)</td></tr>
+    <tr><td>Ad-unlock длительность</td><td><strong>48 часов</strong> (<code>AD_DURATION_MS</code>)</td></tr>
+  </tbody></table></div>
+</section>
+
+<!-- AI RULES -->
+<section class="sec" id="airules" data-s="правила ии генерация кода запреты window input plugin_slot_key">
+  <div class="sh"><div><h3>Правила для ИИ-генерации кода</h3></div><span class="tag g">Strict</span></div>
+  <div class="tw"><table><thead><tr><th>Правило</th><th>Суть</th></tr></thead><tbody>
+    <tr><td>Не придумывать методы</td><td>Если метода нет в этом документе — его не существует</td></tr>
+    <tr><td><code>PLUGIN_ID</code> / <code>PLUGIN_SLOT_KEY</code></td><td>Не объявлять — инжектирует ядро через IIFE</td></tr>
+    <tr><td>Только <code>PLUGIN_SLOT_KEY</code> в setSlot</td><td>Не собирать ключ вручную</td></tr>
+    <tr><td>Нет <code>while(true)</code></td><td>Использовать <code>setInterval</code> / рекурсивный <code>setTimeout</code></td></tr>
+    <tr><td>Canvas pipeline</td><td>Строго: <code>fetchImageBase64</code> → canvas → <code>saveBase64Image</code> → <code>sendWithImage</code></td></tr>
+    <tr><td>UI callbacks</td><td>Всегда <code>window.fn = function(){}</code></td></tr>
+    <tr><td>Input баг</td><td>Всегда <code>singleLine: true</code></td></tr>
+    <tr><td>После setState</td><td>Повторный <code>setSlot()</code></td></tr>
+    <tr><td>Новые модули ★</td><td>Требуют добавления Kotlin-кода в <code>FPTJsBridge</code> (раздел "Kotlin Bridge")</td></tr>
+  </tbody></table></div>
+</section>
+
+<div class="ft">FunPay Tools · Полный Plugin API · v1.3.0.2 · Все 44 файла проекта · © 2026 XaviersDev (AlliSighs)</div>
+</main>
+</div>
+<script>
+(function(){
+  var tgl=document.getElementById('tgl'),root=document.documentElement;
+  var stored=localStorage.getItem('t');
+  root.setAttribute('data-theme',stored||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+  function icon(){var d=root.getAttribute('data-theme')==='dark';tgl.innerHTML=d?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';}
+  icon();
+  tgl.addEventListener('click',function(){var n=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',n);localStorage.setItem('t',n);icon();});
+  var links=[...document.querySelectorAll('.nav a')];
+  var secs=[...document.querySelectorAll('.sec,.hero')];
+  var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id);});});},{rootMargin:'-20% 0px -65% 0px',threshold:.05});
+  secs.forEach(function(s){obs.observe(s);});
+  var srch=document.getElementById('srch');
+  var blk=[...document.querySelectorAll('[data-s]')];
+  srch.addEventListener('input',function(){var q=srch.value.trim().toLowerCase();blk.forEach(function(el){var hit=!q||(el.dataset.s+' '+el.textContent).toLowerCase().includes(q);el.classList.toggle('hid',!hit);});});
+})();
+</script>
+</body>
+</html>'''
+
+with open('/mnt/user-data/outputs/index.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print("Done, size:", len(html))
+PYEOF

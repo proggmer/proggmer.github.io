@@ -1,356 +1,1230 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FunPay Tools — API Documentation</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FunPay Tools DAI — Ultimate Tier</title>
+  <meta name="description" content="Полная HTML-документация FunPay Tools Plugin Documentation for AI (DAI) — Ultimate Tier." />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+  <style>
+    :root,[data-theme="light"]{
+      --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);--text-sm:clamp(0.875rem,0.8rem + 0.35vw,1rem);
+      --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + 0.75vw,1.5rem);
+      --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--text-2xl:clamp(2rem,1.2rem + 2.5vw,3.5rem);
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;
+      --space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;--space-20:5rem;
+      --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#f3f0ec;
+      --color-border:#d4d1ca;--color-divider:#dcd9d5;--color-text:#28251d;--color-text-muted:#7a7974;
+      --color-text-faint:#bab9b4;--color-text-inverse:#f9f8f4;--color-primary:#01696f;
+      --color-primary-hover:#0c4e54;--color-primary-highlight:#cedcd8;--color-success:#437a22;
+      --color-warning:#964219;--color-error:#a12c7b;--radius-sm:.375rem;--radius-md:.5rem;
+      --radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+      --shadow-sm:0 1px 2px oklch(0.2 0.01 80/0.06);--shadow-md:0 4px 12px oklch(0.2 0.01 80/0.08);
+      --shadow-lg:0 12px 32px oklch(0.2 0.01 80/0.12);
+      --font-display:'Cabinet Grotesk',Inter,sans-serif;--font-body:'General Sans',Inter,sans-serif;
+      --content-default:1120px;
+    }
+    [data-theme="dark"]{
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#1d1c1a;
+      --color-border:#393836;--color-divider:#262523;--color-text:#cdccca;--color-text-muted:#979693;
+      --color-text-faint:#5a5957;--color-text-inverse:#2b2a28;--color-primary:#4f98a3;
+      --color-primary-hover:#227f8b;--color-primary-highlight:#313b3b;--color-success:#6daa45;
+      --color-warning:#bb653b;--color-error:#d163a7;
+      --shadow-sm:0 1px 2px oklch(0 0 0/0.2);--shadow-md:0 4px 12px oklch(0 0 0/0.3);
+      --shadow-lg:0 12px 32px oklch(0 0 0/0.4);
+    }
+    *,:before,:after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    body{font-family:var(--font-body);font-size:var(--text-base);background:var(--color-bg);color:var(--color-text);line-height:1.65;min-height:100dvh}
+    a{color:inherit;text-decoration:none}
+    img,svg{display:block;max-width:100%}
+    code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .layout{display:grid;grid-template-columns:300px 1fr;max-width:1440px;margin:0 auto;min-height:100dvh}
+    .sidebar{position:sticky;top:0;height:100dvh;padding:var(--space-8);border-right:1px solid color-mix(in oklab,var(--color-text) 12%,transparent);background:color-mix(in oklab,var(--color-surface) 88%,transparent);backdrop-filter:blur(16px);overflow:auto}
+    .brand{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-8)}
+    .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--color-primary),color-mix(in oklab,var(--color-primary) 35%,white));display:grid;place-items:center;color:white;box-shadow:var(--shadow-md)}
+    .logo svg{width:22px;height:22px}
+    .brand h1{font-family:var(--font-display);font-size:var(--text-lg);line-height:1.05}
+    .brand p{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
+    .controls{display:flex;gap:var(--space-3);margin-bottom:var(--space-6)}
+    .search{width:100%;padding:.85rem 1rem;border-radius:var(--radius-lg);border:1px solid color-mix(in oklab,var(--color-text) 12%,transparent);background:var(--color-surface-2);color:var(--color-text)}
+    .theme-toggle{width:46px;border-radius:var(--radius-lg);border:1px solid color-mix(in oklab,var(--color-text) 12%,transparent);background:var(--color-surface-2);display:grid;place-items:center;cursor:pointer}
+    .nav{display:grid;gap:var(--space-1)}
+    .nav-group{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.09em;color:var(--color-text-faint);padding:.6rem .85rem .3rem;margin-top:var(--space-2)}
+    .nav a{padding:.6rem .85rem;border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text-muted);display:block}
+    .nav a:hover,.nav a.active{background:color-mix(in oklab,var(--color-primary) 10%,var(--color-surface));color:var(--color-text)}
+    .main{padding:var(--space-8) clamp(var(--space-4),4vw,var(--space-12)) var(--space-20)}
+    .hero{display:grid;grid-template-columns:1.25fr 0.95fr;gap:var(--space-8);align-items:end;margin-bottom:var(--space-10)}
+    .hero-card,.stat-card,.callout,.table-wrap,.code-wrap,.section-card{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+    .hero-card{padding:clamp(var(--space-6),4vw,var(--space-10));background:radial-gradient(circle at top right,color-mix(in oklab,var(--color-primary) 14%,transparent),transparent 32%),var(--color-surface)}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem .75rem;border-radius:var(--radius-full);background:color-mix(in oklab,var(--color-primary) 12%,var(--color-surface-offset));color:var(--color-primary);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--space-5)}
+    .hero h2{font-family:var(--font-display);font-size:var(--text-2xl);line-height:.95;max-width:12ch;margin-bottom:var(--space-5)}
+    .hero p{max-width:62ch;color:var(--color-text-muted)}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-top:var(--space-6)}
+    .pill{padding:.55rem .8rem;border-radius:var(--radius-full);background:var(--color-surface-2);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent);font-size:var(--text-sm)}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-4)}
+    .stat-card{padding:var(--space-5)}
+    .stat-card strong{display:block;font-family:var(--font-display);font-size:var(--text-xl);line-height:1}
+    .stat-card span{display:block;color:var(--color-text-muted);font-size:var(--text-sm);margin-top:var(--space-2)}
+    .section{margin-top:var(--space-10);scroll-margin-top:var(--space-8)}
+    .section-header{display:flex;align-items:end;justify-content:space-between;gap:var(--space-4);margin-bottom:var(--space-5)}
+    .section-header h3{font-family:var(--font-display);font-size:var(--text-xl);line-height:1}
+    .section-header p{color:var(--color-text-muted);font-size:var(--text-sm);max-width:60ch}
+    .section-card{padding:var(--space-6)}
+    .callout{padding:var(--space-5);margin-bottom:var(--space-5);background:linear-gradient(180deg,color-mix(in oklab,var(--color-warning) 10%,var(--color-surface)),var(--color-surface))}
+    .callout.info{background:linear-gradient(180deg,color-mix(in oklab,var(--color-primary) 10%,var(--color-surface)),var(--color-surface))}
+    .callout.info strong{color:var(--color-primary)}
+    .callout strong{display:block;margin-bottom:var(--space-2);color:var(--color-warning)}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-5)}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-5)}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+    th,td{padding:.95rem 1rem;vertical-align:top;border-bottom:1px solid var(--color-divider);text-align:left}
+    th{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);background:color-mix(in oklab,var(--color-surface-2) 88%,transparent);position:sticky;top:0}
+    tr:last-child td{border-bottom:none}
+    .code-wrap{overflow:auto;background:color-mix(in oklab,var(--color-surface-2) 82%,black);padding:var(--space-5)}
+    pre{white-space:pre-wrap;word-break:break-word;font-size:.92rem;line-height:1.6;color:var(--color-text)}
+    .tag{display:inline-flex;align-items:center;padding:.28rem .6rem;border-radius:var(--radius-full);font-size:var(--text-xs);background:color-mix(in oklab,var(--color-primary) 14%,var(--color-surface));color:var(--color-primary)}
+    .tag.warn{background:color-mix(in oklab,var(--color-warning) 14%,var(--color-surface));color:var(--color-warning)}
+    .tag.ok{background:color-mix(in oklab,var(--color-success) 14%,var(--color-surface));color:var(--color-success)}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4)}
+    .mini-card{padding:var(--space-5);border-radius:var(--radius-lg);background:var(--color-surface-2);border:1px solid color-mix(in oklab,var(--color-text) 10%,transparent)}
+    .mini-card h4{font-size:var(--text-base);margin-bottom:var(--space-2)}
+    .mini-card p{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .method-block{margin-bottom:var(--space-6);padding-bottom:var(--space-6);border-bottom:1px solid var(--color-divider)}
+    .method-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+    .method-name{font-family:var(--font-display);font-size:var(--text-base);margin-bottom:var(--space-2);display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap}
+    .method-sig{font-family:ui-monospace,Menlo,monospace;font-size:.88rem;color:var(--color-primary);background:color-mix(in oklab,var(--color-primary) 10%,var(--color-surface));padding:.2rem .5rem;border-radius:var(--radius-sm);word-break:break-all}
+    .method-desc{color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-3)}
+    .param-list{display:grid;gap:var(--space-2)}
+    .param{display:flex;gap:var(--space-3);font-size:var(--text-sm)}
+    .param-name{font-family:ui-monospace,Menlo,monospace;color:var(--color-primary);min-width:120px;flex-shrink:0}
+    .param-type{color:var(--color-text-faint);min-width:80px;flex-shrink:0}
+    .return-type{font-size:var(--text-xs);border-radius:var(--radius-full);padding:.2rem .55rem;border:1px solid color-mix(in oklab,var(--color-text) 14%,transparent);color:var(--color-text-muted)}
+    .footer{margin-top:var(--space-12);padding-top:var(--space-6);border-top:1px solid var(--color-divider);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .hidden{display:none!important}
+    mark{background:color-mix(in oklab,var(--color-warning) 28%,transparent);color:inherit;padding:0 .15em;border-radius:.25em}
+    .toc-sub{padding-left:var(--space-4)}
+    @media(max-width:1080px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--color-divider)}.hero{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:760px){.main{padding:var(--space-6) var(--space-4) var(--space-12)}.stat-grid,.grid-2,.grid-3{grid-template-columns:1fr}.section-card,.hero-card,.code-wrap{padding:var(--space-5)}.hero h2{max-width:14ch}.controls{flex-wrap:wrap}.theme-toggle{height:48px}.search{min-height:48px}}
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div class="tags">
-        <span class="tag">FunPay Tools API</span>
-        <span class="tag">Jetpack Compose UI</span>
-        <span class="tag">Local persistence</span>
-        <span class="tag">Chat automation</span>
-        <span class="tag">Support & licensing</span>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 7.5h14"/><path d="M8 7.5V5.8A2.8 2.8 0 0 1 10.8 3h2.4A2.8 2.8 0 0 1 16 5.8v1.7"/>
+          <path d="M6.2 7.5l1.1 10.1A2 2 0 0 0 9.3 19.4h5.4a2 2 0 0 0 2-1.8l1.1-10.1"/>
+          <path d="M10 11.5h4"/>
+        </svg>
       </div>
-      <h1>API Documentation</h1>
-      <p class="subtitle">
-        Документ описывает ключевые UI-компоненты, модели данных и локальный слой хранения приложения FunPay Tools:
-        настройки приветствий, ответы на отзывы, чат с вложениями и выделением сообщений, метки и папки, режим занятости,
-        расписание, блоки монетизации и поддержку проекта.
-      </p>
+      <div><h1>FunPay Tools DAI</h1><p>Ultimate Tier · v1.3</p></div>
+    </div>
+    <div class="controls">
+      <input id="search" class="search" type="search" placeholder="Поиск по документации..." aria-label="Поиск" />
+      <button class="theme-toggle" data-theme-toggle aria-label="Тема">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="nav-group">Основы</div>
+      <a href="#overview">Обзор</a>
+      <a href="#structure">Структура плагина</a>
+      <a href="#events">События</a>
+
+      <div class="nav-group">Базовый API</div>
+      <a href="#api-chat">fpt.chat</a>
+      <a href="#api-orders">fpt.orders</a>
+      <a href="#api-lots">fpt.lots</a>
+      <a href="#api-users">fpt.users</a>
+      <a href="#api-autodelivery">fpt.autodelivery</a>
+      <a href="#api-dumper">fpt.dumper</a>
+      <a href="#api-support">fpt.support</a>
+      <a href="#api-settings">fpt.settings</a>
+      <a href="#api-accounts">fpt.accounts</a>
+      <a href="#api-network">fpt.network</a>
+      <a href="#api-app">fpt.app</a>
+      <a href="#api-ui">fpt.ui</a>
+      <a href="#api-storage">fpt.storage</a>
+      <a href="#api-ai">fpt.ai</a>
+
+      <div class="nav-group">Расширенное API 2.0+</div>
+      <a href="#ext-overlay">fpt.overlay</a>
+      <a href="#ext-contextmenu">fpt.contextMenu</a>
+      <a href="#ext-navigation">fpt.navigation</a>
+      <a href="#ext-compose">fpt.compose</a>
+      <a href="#ext-events">fpt.events</a>
+
+      <div class="nav-group">UI и прочее</div>
+      <a href="#ui-components">Server-Driven UI</a>
+      <a href="#canvas">Canvas to Image</a>
+      <a href="#limits">Лимиты платформы</a>
+      <a href="#ai-rules">Инструкции для ИИ</a>
+    </nav>
+  </aside>
+
+  <main class="main" id="content">
+
+    <!-- OVERVIEW -->
+    <section class="hero" id="overview" data-search="overview funpay tools dai plugin documentation api ultimate tier">
+      <div class="hero-card">
+        <span class="eyebrow">Полная документация · v1.3.0.2</span>
+        <h2>FunPay Tools Plugin API</h2>
+        <p>Полная DAI-документация для разработки плагинов FunPay Tools. Включает базовый API (<code>window.fpt</code>), расширенный API 2.0+, Server-Driven UI, Canvas-пайплайн и инструкции для ИИ-генерации кода.</p>
+        <div class="hero-meta">
+          <span class="pill">Native JS bridge</span>
+          <span class="pill">Android WebView</span>
+          <span class="pill">OkHttp · Cloudflare bypass</span>
+          <span class="pill">Kotlin · Retrofit2</span>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><strong>14</strong><span>модулей в объекте <code>fpt</code></span></div>
+        <div class="stat-card"><strong>10</strong><span>системных событий</span></div>
+        <div class="stat-card"><strong>5</strong><span>блоков расширенного API 2.0+</span></div>
+        <div class="stat-card"><strong>1</strong><span>единый JS-файл плагина</span></div>
+      </div>
     </section>
 
-    <div class="grid">
-      <section class="card span-12">
-        <h2>Overview</h2>
-        <div class="cols">
+    <!-- STRUCTURE -->
+    <section class="section" id="structure" data-search="структура плагина мета информация banner plugin_id plugin_slot_key запрещенные поля">
+      <div class="section-header">
+        <div><h3>1. Структура плагина</h3><p>Плагин — единый <code>.js</code>-файл. Метаданные указываются в комментариях строго в начале, до любого исполняемого кода.</p></div>
+        <span class="tag">Core rules</span>
+      </div>
+      <div class="section-card">
+        <div class="code-wrap" style="margin-bottom:1.5rem">
+<pre>// @name Название Плагина
+// @author Ваш Ник
+// @version 1.0
+// @description Подробное описание того, что делает плагин.
+// @banner https://funpay.tools/default-banner.jpeg
+
+fpt.app.log("Плагин успешно инициализирован!");</pre>
+        </div>
+        <div class="callout">
+          <strong>Критично для генерации кода</strong>
+          <p>Нельзя придумывать поля <code>@id</code>, вызывать <code>fpt.plugin.register(...)</code>, использовать <code>fpt.init(...)</code> или ссылаться на несуществующий объект <code>fpt.config</code>. Запрещено вручную объявлять <code>PLUGIN_ID</code> и <code>PLUGIN_SLOT_KEY</code> — их внедряет ядро через IIFE.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Запрещено</th><th>Почему</th></tr></thead>
+            <tbody>
+              <tr><td><code>// @id anything</code></td><td>Поле <code>@id</code> не существует; ID создаёт ядро.</td></tr>
+              <tr><td><code>var PLUGIN_ID = "..."</code></td><td><code>PLUGIN_ID</code> уже доступен глобально, переобъявление ломает совместимость.</td></tr>
+              <tr><td><code>var PLUGIN_SLOT_KEY = "..."</code></td><td>Готовое значение уже передаётся плагину ядром.</td></tr>
+              <tr><td><code>fpt.plugin.register(...)</code></td><td>Такого метода нет; плагин выполняется как обычный скрипт.</td></tr>
+              <tr><td><code>fpt.init(...)</code></td><td>Метод отсутствует в API.</td></tr>
+              <tr><td><code>fpt.config.*</code></td><td>Для настроек плагина используйте <code>fpt.storage</code>.</td></tr>
+              <tr><td><code>while(true)</code></td><td>Блокирует WebView; используйте <code>setInterval</code> / рекурсивный <code>setTimeout</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="section" id="events" data-search="events listeners onNewMessage onNewOrder onBalanceChanged onAppForeground emit">
+      <div class="section-header">
+        <div><h3>2. События</h3><p>Подписка через <code>fpt.on(eventName, callback)</code>. Диспетчеризация из нативного кода через <code>fpt.emit(name, jsonString)</code>.</p></div>
+        <span class="tag">Event listeners</span>
+      </div>
+      <div class="section-card">
+        <div class="code-wrap" style="margin-bottom:1.5rem">
+<pre>fpt.on("onNewMessage", function(data) {
+    if (data.isMe) return;
+    fpt.app.log("Новое сообщение от " + data.username + ": " + data.text);
+    if (data.text === "!ping") fpt.chat.send(data.chatId, "Pong!");
+});
+
+fpt.on("onNewOrder", function(data) {
+    fpt.app.notify("Новый заказ", data.orderId + " от " + data.buyerName);
+});
+
+fpt.on("onBalanceChanged", function(data) {
+    fpt.app.log("Баланс: " + data.oldBalance + " → " + data.newBalance);
+});</pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Событие</th><th>Payload (JSON)</th><th>Описание</th></tr></thead>
+            <tbody>
+              <tr><td><code>onNewMessage</code></td><td><code>{ chatId, username, text, isMe }</code></td><td>Новое сообщение в любом чате.</td></tr>
+              <tr><td><code>onNewOrder</code></td><td><code>{ orderId, chatId, buyerName }</code></td><td>Приложение зафиксировало фразу об оплате заказа.</td></tr>
+              <tr><td><code>onOrderConfirmed</code></td><td><code>{ orderId, status }</code></td><td>Подтверждение заказа.</td></tr>
+              <tr><td><code>onOrderRefunded</code></td><td><code>{ orderId, status }</code></td><td>Возврат средств по заказу.</td></tr>
+              <tr><td><code>onBalanceChanged</code></td><td><code>{ oldBalance, newBalance, currency }</code></td><td>Изменение баланса аккаунта.</td></tr>
+              <tr><td><code>onLotSold</code></td><td><code>{ lotId, lotTitle, buyerName, price }</code></td><td>Продажа лота.</td></tr>
+              <tr><td><code>onChatOpened</code></td><td><code>{ chatId, username }</code></td><td>Пользователь открыл чат.</td></tr>
+              <tr><td><code>onAccountSwitched</code></td><td><code>{ accountId, username }</code></td><td>Переключение аккаунта.</td></tr>
+              <tr><td><code>onAppForeground</code></td><td><code>{}</code></td><td>Приложение вышло на передний план.</td></tr>
+              <tr><td><code>onAppBackground</code></td><td><code>{}</code></td><td>Приложение ушло в фон.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: CHAT -->
+    <section class="section" id="api-chat" data-search="fpt.chat getList getHistory getInfo send sendWithImage markRead resolveUserId createChat чат история сообщения">
+      <div class="section-header">
+        <div><h3>fpt.chat</h3><p>Работа с чатами: список, история, отправка сообщений и изображений, пометка как прочитанное.</p></div>
+        <span class="tag">Chat</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.getList()</span><span class="return-type">→ ChatItem[]</span></div>
+          <div class="method-desc">Возвращает список всех чатов текущего аккаунта.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>id</code></td><td>string</td><td>ID чата (nodeId)</td></tr>
+            <tr><td><code>username</code></td><td>string</td><td>Ник собеседника</td></tr>
+            <tr><td><code>lastMessage</code></td><td>string</td><td>Последнее сообщение</td></tr>
+            <tr><td><code>isUnread</code></td><td>boolean</td><td>Есть ли непрочитанные</td></tr>
+            <tr><td><code>avatarUrl</code></td><td>string</td><td>URL аватарки</td></tr>
+            <tr><td><code>date</code></td><td>string</td><td>Дата последнего сообщения</td></tr>
+            <tr><td><code>activeLot</code></td><td>string|null</td><td>Лот, который сейчас смотрит пользователь</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.getHistory(chatId)</span><span class="return-type">→ MessageItem[]</span></div>
+          <div class="method-desc">История сообщений чата. <code>chatId</code> — строка nodeId.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>id</code></td><td>string</td><td>ID сообщения</td></tr>
+            <tr><td><code>author</code></td><td>string</td><td>Ник автора</td></tr>
+            <tr><td><code>text</code></td><td>string</td><td>Текст</td></tr>
+            <tr><td><code>isMe</code></td><td>boolean</td><td>Моё сообщение</td></tr>
+            <tr><td><code>time</code></td><td>string</td><td>Время</td></tr>
+            <tr><td><code>imageUrl</code></td><td>string|null</td><td>URL изображения</td></tr>
+            <tr><td><code>authorId</code></td><td>string|null</td><td>ID автора (числовой)</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.getInfo(chatId)</span><span class="return-type">→ ChatInfo|null</span></div>
+          <div class="method-desc">Расширенная информация о собеседнике по chatId.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>lookingAtLink</code></td><td>string|null</td><td>Ссылка на просматриваемый лот</td></tr>
+            <tr><td><code>lookingAtName</code></td><td>string|null</td><td>Название просматриваемого лота</td></tr>
+            <tr><td><code>registrationDate</code></td><td>string|null</td><td>Дата регистрации</td></tr>
+            <tr><td><code>language</code></td><td>string|null</td><td>Язык пользователя</td></tr>
+            <tr><td><code>avatarUrl</code></td><td>string|null</td><td>URL аватарки</td></tr>
+            <tr><td><code>userStatus</code></td><td>string|null</td><td>Статус пользователя</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.resolveUserId(nodeId)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Преобразует nodeId чата в числовой userId пользователя. Нужно для <code>fpt.create()</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.send(chatId, text)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Отправляет текстовое сообщение в чат. Соблюдайте лимиты платформы: макс. 2000 символов, 20 переносов строки.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.sendWithImage(chatId, text, localUri, imageFirst)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Отправляет сообщение с изображением. <code>localUri</code> — путь, полученный от <code>fpt.app.saveBase64Image()</code>. <code>imageFirst: boolean</code> — отправить картинку первой или после текста.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.chat.markRead(chatId)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Помечает чат как прочитанный.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.create(targetUserId, text)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Создаёт новый чат с пользователем по числовому userId и отправляет первое сообщение. userId получайте через <code>fpt.chat.resolveUserId(nodeId)</code>.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: ORDERS -->
+    <section class="section" id="api-orders" data-search="fpt.orders getDetails confirm refund review reply write заказы возврат подтверждение отзыв">
+      <div class="section-header">
+        <div><h3>fpt.orders</h3><p>Детали заказа, подтверждение, возврат средств и работа с отзывами.</p></div>
+        <span class="tag">Orders</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.orders.getDetails(orderId)</span><span class="return-type">→ OrderDetails|null</span></div>
+          <div class="method-desc">Полные данные по заказу.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>id</code></td><td>string</td><td>ID заказа</td></tr>
+            <tr><td><code>status</code></td><td>string</td><td>Статус заказа</td></tr>
+            <tr><td><code>gameTitle</code></td><td>string</td><td>Название игры/категории</td></tr>
+            <tr><td><code>shortDesc</code></td><td>string</td><td>Краткое описание</td></tr>
+            <tr><td><code>price</code></td><td>string</td><td>Сумма</td></tr>
+            <tr><td><code>buyerName</code></td><td>string</td><td>Ник покупателя</td></tr>
+            <tr><td><code>buyerId</code></td><td>string</td><td>ID покупателя</td></tr>
+            <tr><td><code>buyerAvatar</code></td><td>string</td><td>URL аватара покупателя</td></tr>
+            <tr><td><code>canRefund</code></td><td>boolean</td><td>Доступен ли возврат</td></tr>
+            <tr><td><code>canConfirm</code></td><td>boolean</td><td>Доступно ли подтверждение</td></tr>
+            <tr><td><code>hasReview</code></td><td>boolean</td><td>Есть ли отзыв</td></tr>
+            <tr><td><code>reviewRating</code></td><td>number</td><td>Оценка отзыва (1–5)</td></tr>
+            <tr><td><code>reviewText</code></td><td>string</td><td>Текст отзыва покупателя</td></tr>
+            <tr><td><code>sellerReply</code></td><td>string</td><td>Ваш ответ на отзыв</td></tr>
+            <tr><td><code>params</code></td><td>object</td><td>Параметры заказа (ключ→значение)</td></tr>
+            <tr><td><code>lotId</code></td><td>string|null</td><td>ID лота</td></tr>
+            <tr><td><code>isBuyer</code></td><td>boolean</td><td>Вы являетесь покупателем</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.orders.confirm(orderId)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Подтверждает выполнение заказа.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.orders.refund(orderId)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Возвращает средства по заказу.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.orders.review.reply(orderId, text, stars)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Отвечает на отзыв покупателя. <code>stars</code> — ваша оценка (1–5, обычно 5).</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.orders.review.write(orderId, text, stars)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Оставляет ваш отзыв на продавца (когда вы выступаете покупателем).</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: LOTS -->
+    <section class="section" id="api-lots" data-search="fpt.lots getMy getFields raiseAll toggle delete changePrice copy лоты поднятие цена">
+      <div class="section-header">
+        <div><h3>fpt.lots</h3><p>Управление лотами: список, редактирование, поднятие, цены, копирование.</p></div>
+        <span class="tag">Lots</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.getMy()</span><span class="return-type">→ LotItem[]</span></div>
+          <div class="method-desc">Список всех ваших лотов с полями: <code>id</code>, <code>title</code>, <code>price</code>, <code>isActive</code>, <code>nodeId</code>, <code>gameId</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.getFields(lotId)</span><span class="return-type">→ LotFieldsData|null</span></div>
+          <div class="method-desc">Все редактируемые поля лота, нужные для сохранения. Содержит <code>fields</code> (map ключ → <code>{label, value, type}</code>) и <code>csrfToken</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.raiseAll()</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Поднимает все лоты (эквивалент нажатия «Поднять все»). Может занять до 60 секунд.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.toggle(lotId, active)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Включает (<code>active=true</code>) или отключает (<code>active=false</code>) лот.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.delete(lotId)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Удаляет лот безвозвратно.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.lots.changePrice(lotId, newPrice)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Меняет цену лота. <code>newPrice</code> — число с плавающей точкой (например, <code>149.99</code>).</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.lots.copy(lotId, targetNodeId)</span><span class="return-type">→ object|null</span></div>
+          <div class="method-desc">Копирует лот в другую категорию. <code>targetNodeId</code> — ID целевой категории; передайте пустую строку <code>""</code> для копирования в ту же категорию.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: USERS -->
+    <section class="section" id="api-users" data-search="fpt.users getProfile getRmtHub getSales getOrdersWith setAvatar профиль продажи аватар">
+      <div class="section-header">
+        <div><h3>fpt.users</h3><p>Профиль текущего аккаунта, статистика продаж, RMTHub, поиск заказов по пользователю, смена аватара.</p></div>
+        <span class="tag">Users</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.users.getProfile()</span><span class="return-type">→ UserProfile|null</span></div>
+          <div class="method-desc">Полный профиль текущего аккаунта: ник, аватар, рейтинг, статистика, баланс.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.users.getRmtHub(username)</span><span class="return-type">→ RmtHubStats|null</span></div>
+          <div class="method-desc">Глобальная статистика пользователя с RMTHub: общий доход, количество игр, средний чек, статус блокировки.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.users.getSales()</span><span class="return-type">→ SaleItem[]</span></div>
+          <div class="method-desc">Первая страница истории продаж. Поля: <code>orderId</code>, <code>buyerName</code>, <code>price</code>, <code>date</code>, <code>status</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.users.getOrdersWith(username, isSales)</span><span class="return-type">→ OrderSummaryItem[]</span></div>
+          <div class="method-desc">Поиск заказов с конкретным пользователем. <code>isSales=true</code> — ваши продажи ему, <code>false</code> — покупки у него.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.users.setAvatar(base64Image)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Устанавливает аватар аккаунта. Принимает Base64-строку (с или без <code>data:image/...;base64,</code> префикса). Максимальный размер — 5 МБ до декодирования.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: AUTODELIVERY -->
+    <section class="section" id="api-autodelivery" data-search="fpt.autodelivery getSettings saveSettings getFileCount readFile saveFile автовыдача">
+      <div class="section-header">
+        <div><h3>fpt.autodelivery</h3><p>Управление настройками автовыдачи и файлами товаров.</p></div>
+        <span class="tag">AutoDelivery</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.autodelivery.getSettings()</span><span class="return-type">→ AutoDeliverySettings</span></div>
+          <div class="method-desc">Получает текущие настройки автовыдачи как JSON-объект.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.autodelivery.saveSettings(jsonStr)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Сохраняет настройки автовыдачи. Принимает JSON-строку с объектом настроек.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.autodelivery.getFileCount(fileName)</span><span class="return-type">→ number</span></div>
+          <div class="method-desc">Возвращает количество оставшихся товаров в файле автовыдачи.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.autodelivery.readFile(fileName)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Читает содержимое файла товаров автовыдачи (каждый товар на отдельной строке).</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.autodelivery.saveFile(fileName, content)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Сохраняет содержимое файла товаров автовыдачи.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: DUMPER -->
+    <section class="section" id="api-dumper" data-search="fpt.dumper getSettings saveSettings runCycle демпер конкуренты цена">
+      <div class="section-header">
+        <div><h3>fpt.dumper</h3><p>XD Dumper — автоматический мониторинг конкурентов и управление ценой.</p></div>
+        <span class="tag">Dumper</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.dumper.getSettings()</span><span class="return-type">→ DumperSettings</span></div>
+          <div class="method-desc">Настройки XD Dumper: конфигурация лотов, шаг цены, лимиты.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.dumper.saveSettings(jsonStr)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Сохраняет настройки демпера. Принимает JSON-строку.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.dumper.runCycle()</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Запускает один цикл демпера вручную. Может занять до 120 секунд.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: SUPPORT -->
+    <section class="section" id="api-support" data-search="fpt.support getTickets getDetails create reply техподдержка тикеты">
+      <div class="section-header">
+        <div><h3>fpt.support</h3><p>Работа с техподдержкой FunPay: список тикетов, просмотр, создание и ответ.</p></div>
+        <span class="tag">Support</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.support.getTickets()</span><span class="return-type">→ TicketListItem[]</span></div>
+          <div class="method-desc">Список всех тикетов в техподдержку. Поля: <code>id</code>, <code>subject</code>, <code>status</code>, <code>date</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.support.getDetails(ticketId)</span><span class="return-type">→ TicketDetails|null</span></div>
+          <div class="method-desc">Полный просмотр тикета с историей переписки.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.support.create(catId, fieldsJson, message)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Создаёт новый тикет. <code>catId</code> — ID категории обращения, <code>fieldsJson</code> — JSON-строка с полями формы, <code>message</code> — текст первого сообщения. Возвращает ID созданного тикета.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.support.reply(ticketId, message)</span><span class="return-type">→ boolean</span></div>
+          <div class="method-desc">Добавляет ответ в существующий тикет.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: SETTINGS -->
+    <section class="section" id="api-settings" data-search="fpt.settings getFolders saveFolders getLabels saveLabels getChatLabels getBusyMode getCommands getTemplates getReminders папки метки режим занятости команды шаблоны напоминания">
+      <div class="section-header">
+        <div><h3>fpt.settings</h3><p>Доступ к настройкам приложения: папки, метки, режим занятости, авто-команды, шаблоны и напоминания.</p></div>
+        <span class="tag">Settings</span>
+      </div>
+      <div class="section-card">
+        <div class="grid-2" style="margin-bottom:1rem">
           <div>
-            <h3>Основные области</h3>
-            <ul>
-              <li>Настройки автоматических ответов и приветствий.</li>
-              <li>Работа с чатами: фильтрация, метки, папки, архив.</li>
-              <li>Экран переписки: выбор сообщений, медиа, поиск, перевод.</li>
-              <li>Режим занятости и расписание.</li>
-              <li>Поддержка, донаты, PRO-статусы и реклама-разблокировка.</li>
-            </ul>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getFolders()</span><span class="return-type">→ ChatFolder[]</span></div>
+              <div class="method-desc">Список пользовательских папок для чатов.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveFolders(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет конфигурацию папок.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getLabels()</span><span class="return-type">→ ChatLabel[]</span></div>
+              <div class="method-desc">Список цветных меток чатов.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveLabels(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет метки.</div>
+            </div>
+            <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+              <div class="method-name"><span class="method-sig">fpt.settings.getChatLabels()</span><span class="return-type">→ object</span></div>
+              <div class="method-desc">Map: <code>chatId → string[]</code> (применённые метки).</div>
+            </div>
           </div>
           <div>
-            <h3>Ключевые Compose-паттерны</h3>
-            <ul>
-              <li><code>remember</code> и <code>mutableStateOf</code> для локального состояния.</li>
-              <li><code>LazyColumn</code> для длинных списков и настроек.</li>
-              <li><code>Dialog</code> + <code>verticalScroll</code> для модальных редакторов.</li>
-              <li><code>rememberLauncherForActivityResult</code> для Photo Picker.</li>
-              <li><code>SharedPreferences</code> + Gson для локального хранения JSON.</li>
-            </ul>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveChatLabels(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет привязку меток к чатам.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getBusyMode()</span><span class="return-type">→ BusyModeSettings</span></div>
+              <div class="method-desc">Настройки режима занятости.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveBusyMode(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет настройки режима занятости.</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getCommands()</span><span class="return-type">→ AutoResponseCommand[]</span></div>
+              <div class="method-desc">Список авто-команд (триггер → ответ).</div>
+            </div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveCommands(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет авто-команды.</div>
+            </div>
           </div>
         </div>
-      </section>
+        <div class="grid-2">
+          <div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getTemplates()</span><span class="return-type">→ MessageTemplate[]</span></div>
+              <div class="method-desc">Список шаблонов сообщений. Поля: <code>id</code>, <code>name</code>, <code>text</code>, <code>imageUri</code>.</div>
+            </div>
+            <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveTemplates(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет шаблоны сообщений.</div>
+            </div>
+          </div>
+          <div>
+            <div class="method-block">
+              <div class="method-name"><span class="method-sig">fpt.settings.getReminders()</span><span class="return-type">→ PendingOrderReminder[]</span></div>
+              <div class="method-desc">Список запланированных напоминаний по заказам.</div>
+            </div>
+            <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+              <div class="method-name"><span class="method-sig">fpt.settings.saveReminders(jsonStr)</span><span class="return-type">→ void</span></div>
+              <div class="method-desc">Сохраняет напоминания.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <section class="card span-8">
-        <h2>Data Models</h2>
-        <h3>Chat and settings models</h3>
-        <pre>data class ChatLabel(
-  val id: String = UUID.randomUUID().toString(),
-  val name: String = "",
-  val color: String = "#7C4DFF"
-)
+    <!-- API: ACCOUNTS -->
+    <section class="section" id="api-accounts" data-search="fpt.accounts getAll getActive switch мультиаккаунт переключение">
+      <div class="section-header">
+        <div><h3>fpt.accounts</h3><p>Мультиаккаунт: список, активный аккаунт, переключение.</p></div>
+        <span class="tag">Accounts</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.accounts.getAll()</span><span class="return-type">→ Account[]</span></div>
+          <div class="method-desc">Список всех добавленных аккаунтов. Поля: <code>id</code>, <code>username</code>, <code>avatarUrl</code>, <code>isActive</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.accounts.getActive()</span><span class="return-type">→ Account|null</span></div>
+          <div class="method-desc">Текущий активный аккаунт.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.accounts.switch(accountId)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Переключает активный аккаунт по ID. Вызывает перезагрузку сессии.</div>
+        </div>
+      </div>
+    </section>
 
-data class ChatFolder(
-  val id: String = UUID.randomUUID().toString(),
-  val name: String = "",
-  val chatIds: List<String> = emptyList(),
-  val isPreset: Boolean = false,
-  val presetType: String? = null
-)
+    <!-- API: NETWORK -->
+    <section class="section" id="api-network" data-search="fpt.network get post fetchImageBase64 http запросы cloudflare cookies">
+      <div class="section-header">
+        <div><h3>fpt.network</h3><p>Нативные HTTP-запросы через OkHttp в обход Cloudflare с сессионными cookies текущего аккаунта.</p></div>
+        <span class="tag">Network</span>
+      </div>
+      <div class="section-card">
+        <div class="callout info">
+          <strong>Безопасность и ограничения</strong>
+          <p>Запросы к <code>funpay.com</code> выполняются с сессионными cookies автоматически. Для сторонних URL cookie не добавляются. Недоступные схемы (file://, content://) блокируются. Небезопасные заголовки (<code>Cookie</code>, <code>Authorization</code> к чужим хостам и т.д.) фильтруются.</p>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.network.get(url, headersJson)</span><span class="return-type">→ {status, body}|null</span></div>
+          <div class="method-desc">GET-запрос. <code>headersJson</code> — JSON-объект заголовков (или <code>{}</code>). Возвращает <code>{status: number, body: string}</code>.</div>
+          <div class="code-wrap">
+<pre>var res = fpt.network.get("https://funpay.com/users/123/", {});
+if (res && res.status === 200) {
+    fpt.app.log("Получено байт: " + res.body.length);
+}</pre>
+          </div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.network.post(url, body, headersJson)</span><span class="return-type">→ {status, body}|null</span></div>
+          <div class="method-desc">POST-запрос. <code>body</code> — строка (JSON, form-encoded и т.д.). Content-Type укажите в <code>headersJson</code>.</div>
+          <div class="code-wrap">
+<pre>var res = fpt.network.post(
+    "https://example.com/api",
+    JSON.stringify({ key: "value" }),
+    '{"Content-Type": "application/json"}'
+);
+if (res && res.status === 200) {
+    var data = JSON.parse(res.body);
+}</pre>
+          </div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.network.fetchImageBase64(url)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Скачивает изображение и возвращает его как Base64 Data URL (<code>data:image/...;base64,...</code>). Используйте для загрузки внешних изображений в Canvas (обход CORS).</div>
+        </div>
+      </div>
+    </section>
 
-data class BusyModeSettings(
-  val enabled: Boolean = false,
-  val message: String = "Я сейчас занят, отвечу позже",
-  val cooldownMinutes: Int = 60,
-  val autoRefund: Boolean = false,
-  val autoRefundMessage: Boolean = false,
-  val keepRaise: Boolean = false,
-  val keepAutoResponse: Boolean = false,
-  val keepGreeting: Boolean = false,
-  val enabledAt: Long = 0L,
-  val imageUri: String? = null,
-  val imageFirst: Boolean = true,
-  val skipRefundIfAutoDelivery: Boolean = false,
-  val autoDeliveryMessageEnabled: Boolean = false,
-  val autoDeliveryMessage: String = "Спасибо за заказ! Товар уже выдан автоматически..."
-)</pre>
-      </section>
+    <!-- API: APP -->
+    <section class="section" id="api-app" data-search="fpt.app toast notify vibrate log updateWidgets saveBase64Image уведомления тост лог виброотклик">
+      <div class="section-header">
+        <div><h3>fpt.app</h3><p>Системные функции приложения: уведомления, логи, вибрация, виджеты, сохранение изображений.</p></div>
+        <span class="tag">App</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.app.toast(message)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Показывает короткий Toast (всплывающее сообщение в нижней части экрана).</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.app.notify(title, message)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Отправляет системное Android-уведомление с заголовком и текстом.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.app.vibrate(ms)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Виброотклик на <code>ms</code> миллисекунд.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.app.log(message)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Записывает строку в консоль плагина (вкладка «Консоль» в приложении). Максимум 2000 символов на вызов.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.app.updateWidgets()</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Принудительно обновляет виджеты на рабочем столе Android.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.app.saveBase64Image(base64DataUrl)</span><span class="return-type">→ string|null</span></div>
+          <div class="method-desc">Сохраняет Base64 Data URL во временный файл на устройстве и возвращает локальный URI. Обязателен перед вызовом <code>fpt.chat.sendWithImage()</code>.</div>
+        </div>
+      </div>
+    </section>
 
-      <section class="card span-4">
-        <h2>Storage Layer</h2>
-        <p><b>ChatFolderManager</b> объединяет загрузку и сохранение меток, папок, связей чатов, busy mode, flood chat и расписания через SharedPreferences.</p>
-        <p class="note">Данные сериализуются в JSON и читаются обратно через Gson, что упрощает быстрый локальный persistence без отдельной БД.</p>
-      </section>
+    <!-- API: UI -->
+    <section class="section" id="api-ui" data-search="fpt.ui setSlot removeSlot getState setState PLUGIN_SLOT_KEY интерфейс слот">
+      <div class="section-header">
+        <div><h3>fpt.ui</h3><p>Server-Driven UI: рендер интерфейса плагина в карточке настроек через <code>PLUGIN_SLOT_KEY</code>.</p></div>
+        <span class="tag">UI</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.ui.setSlot(slotKey, uiObject)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Рендерит UI-дерево в слоте плагина. Всегда используйте <code>PLUGIN_SLOT_KEY</code>, а не строку вручную.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.ui.removeSlot(slotKey)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Убирает UI плагина из карточки настроек.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.ui.getState(key)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Читает значение из UI-стейта по ключу <code>stateKey</code> компонента. Всегда строка.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.ui.setState(key, value)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Устанавливает значение в UI-стейт. После этого нужен повторный вызов <code>fpt.ui.setSlot()</code>, чтобы компонент перерисовался.</div>
+        </div>
+      </div>
+    </section>
 
-      <section class="card span-12">
-        <h2>Compose Screens</h2>
+    <!-- API: STORAGE -->
+    <section class="section" id="api-storage" data-search="fpt.storage get set хранилище SharedPreferences изолированное">
+      <div class="section-header">
+        <div><h3>fpt.storage</h3><p>Изолированное хранилище плагина через SharedPreferences. Данные сохраняются между перезапусками.</p></div>
+        <span class="tag">Storage</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.storage.get(key)</span><span class="return-type">→ string|null</span></div>
+          <div class="method-desc">Читает значение по ключу. Возвращает <code>null</code>, если ключ не существует.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.storage.set(key, value)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Сохраняет строковое значение по ключу. Для объектов используйте <code>JSON.stringify()</code>.</div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>// Пример: счётчик запусков
+var count = parseInt(fpt.storage.get("launch_count") || "0");
+count++;
+fpt.storage.set("launch_count", String(count));
+fpt.app.log("Запусков плагина: " + count);
+
+// Хранение объекта
+var settings = { enabled: true, delay: 5 };
+fpt.storage.set("my_settings", JSON.stringify(settings));
+var loaded = JSON.parse(fpt.storage.get("my_settings") || "{}");
+</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- API: AI -->
+    <section class="section" id="api-ai" data-search="fpt.ai ask rewrite translate ИИ нейросеть переписать перевести">
+      <div class="section-header">
+        <div><h3>fpt.ai</h3><p>Встроенный ИИ-ассистент: вопросы, переписывание текста, перевод.</p></div>
+        <span class="tag">AI</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.ai.ask(prompt)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Задаёт свободный вопрос нейросети. Возвращает текстовый ответ.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.ai.rewrite(text, context)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Переписывает <code>text</code> в профессиональный стиль с учётом <code>context</code> (например, контекст диалога или ситуации).</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.ai.translate(text)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Переводит текст на русский язык.</div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>fpt.on("onNewMessage", function(data) {
+    if (data.isMe) return;
+    var professional = fpt.ai.rewrite(data.text, "продавец FunPay отвечает покупателю");
+    fpt.app.log("Исходный: " + data.text);
+    fpt.app.log("Переписан: " + professional);
+});</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVER-DRIVEN UI -->
+    <section class="section" id="ui-components" data-search="server driven ui компоненты Column Row Text Button Switch Checkbox Input Slider Card Image Spacer Divider Window window глобальные функции">
+      <div class="section-header">
+        <div><h3>Server-Driven UI</h3><p>Полный список компонентов для построения интерфейса плагина через <code>fpt.ui.setSlot()</code>.</p></div>
+        <span class="tag">PLUGIN_SLOT_KEY only</span>
+      </div>
+      <div class="section-card">
+        <div class="callout">
+          <strong>Три важных правила</strong>
+          <p>1. Все функции в <code>onClick</code> / <code>onChange</code> обязаны быть в глобальном скоупе: <code>window.myFn = function(){}</code>.<br>2. Для <code>Input</code> всегда указывайте <code>singleLine: true</code>, иначе переносы строк могут сломать сохранение стейта.<br>3. После <code>fpt.ui.setState()</code> нужен повторный <code>fpt.ui.setSlot()</code>, чтобы компонент визуально обновился.</p>
+        </div>
+        <div class="table-wrap" style="margin-bottom:1.5rem">
+          <table>
+            <thead><tr><th>Компонент</th><th>Обязательные поля</th><th>Опциональные поля</th></tr></thead>
+            <tbody>
+              <tr><td><code>Column</code></td><td><code>children: []</code></td><td><code>padding</code>, <code>spacing</code></td></tr>
+              <tr><td><code>Row</code></td><td><code>children: []</code></td><td><code>padding</code>, <code>spacing</code></td></tr>
+              <tr><td><code>Text</code></td><td><code>text: string</code></td><td><code>color</code>, <code>bold: bool</code>, <code>fontSize: float</code></td></tr>
+              <tr><td><code>Button</code></td><td><code>text: string</code>, <code>onClick: "window.fn()"</code></td><td><code>color</code></td></tr>
+              <tr><td><code>Switch</code></td><td><code>stateKey: string</code></td><td><code>text</code>, <code>onChange: "window.fn()"</code></td></tr>
+              <tr><td><code>Checkbox</code></td><td><code>stateKey: string</code></td><td><code>text</code>, <code>onChange: "window.fn()"</code></td></tr>
+              <tr><td><code>Input</code></td><td><code>stateKey: string</code>, <code>singleLine: true</code></td><td><code>label</code>, <code>onChange: "window.fn()"</code></td></tr>
+              <tr><td><code>Slider</code></td><td><code>stateKey: string</code>, <code>min: number</code>, <code>max: number</code></td><td><code>onChange: "window.fn()"</code></td></tr>
+              <tr><td><code>Card</code></td><td><code>children: []</code></td><td><code>padding</code></td></tr>
+              <tr><td><code>Image</code></td><td><code>url: string</code></td><td><code>width</code>, <code>height</code></td></tr>
+              <tr><td><code>Spacer</code></td><td>—</td><td><code>size: number</code></td></tr>
+              <tr><td><code>Divider</code></td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-wrap">
+<pre>function renderUI() {
+    fpt.ui.setSlot(PLUGIN_SLOT_KEY, {
+        type: "Card",
+        children: [
+            { type: "Text", text: "Настройки плагина", bold: true, fontSize: 16.0 },
+            { type: "Spacer", size: 12 },
+            { type: "Input", stateKey: "apiKey", label: "API ключ", singleLine: true },
+            { type: "Spacer", size: 8 },
+            { type: "Row", children: [
+                { type: "Switch", text: "Включить автоответ", stateKey: "autoEnabled",
+                  onChange: "window.onToggle()" }
+            ]},
+            { type: "Spacer", size: 8 },
+            { type: "Slider", stateKey: "delaySeconds", min: 1, max: 30,
+              onChange: "window.onSlider()" },
+            { type: "Spacer", size: 12 },
+            { type: "Divider" },
+            { type: "Spacer", size: 12 },
+            { type: "Button", text: "Сохранить настройки", onClick: "window.save()" }
+        ]
+    });
+}
+
+window.onToggle = function() {
+    var enabled = fpt.ui.getState("autoEnabled") === "true";
+    fpt.app.toast(enabled ? "Автоответ включён" : "Автоответ выключен");
+};
+
+window.onSlider = function() {
+    var delay = fpt.ui.getState("delaySeconds");
+    fpt.app.log("Задержка: " + delay + " сек");
+};
+
+window.save = function() {
+    var key = fpt.ui.getState("apiKey");
+    if (!key) return fpt.app.toast("Введите ключ!");
+    fpt.storage.set("apiKey", key);
+    fpt.storage.set("autoEnabled", fpt.ui.getState("autoEnabled"));
+    fpt.storage.set("delay", fpt.ui.getState("delaySeconds"));
+    fpt.app.toast("Сохранено ✓");
+    renderUI();
+};
+
+renderUI();</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXTENDED API -->
+    <section class="section" id="ext-overlay" data-search="fpt.overlay addButton addBanner addItem оверлей экраны chats orders lots profile support global">
+      <div class="section-header">
+        <div><h3>fpt.overlay <span style="font-family:var(--font-body);font-size:.75em;font-weight:400;color:var(--color-text-muted)">2.0+</span></h3><p>Плавающие кнопки, баннеры и элементы поверх экранов приложения.</p></div>
+        <span class="tag warn">v2.0+</span>
+      </div>
+      <div class="section-card">
+        <div class="callout">
+          <strong>Проверка совместимости</strong>
+          <p>Все методы расширенного API доступны только в приложении v2.0+. Всегда проверяйте: <code>if (typeof fpt.overlay !== 'undefined') { ... }</code></p>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.overlay.addButton(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Добавляет плавающую кнопку на экран.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>screen</code></td><td>string</td><td><code>"chats"</code>, <code>"orders"</code>, <code>"lots"</code>, <code>"profile"</code>, <code>"support"</code>, <code>"global"</code></td></tr>
+            <tr><td><code>icon</code></td><td>string</td><td>URL иконки (PNG/JPG)</td></tr>
+            <tr><td><code>tooltip</code></td><td>string</td><td>Текст подсказки</td></tr>
+            <tr><td><code>position</code></td><td>string</td><td><code>"bottom_right"</code>, <code>"bottom_left"</code>, <code>"top_right"</code>, <code>"top_left"</code></td></tr>
+            <tr><td><code>onClick</code></td><td>string</td><td>Строка JS-вызова: <code>"window.myFn()"</code></td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.overlay.addBanner(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Добавляет информационный баннер. Поля: <code>screen</code>, <code>text</code>, <code>color</code>, <code>onClick</code>.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.overlay.addItem(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Добавляет пункт в список. Поля: <code>screen</code>, <code>title</code>, <code>subtitle</code>, <code>icon</code>, <code>onClick</code>.</div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>if (typeof fpt.overlay !== 'undefined') {
+    fpt.overlay.addButton({
+        screen: "chats",
+        icon: "https://example.com/icon.png",
+        tooltip: "Быстрый ответ",
+        position: "bottom_right",
+        onClick: "window.quickReply()"
+    });
+}
+
+window.quickReply = function() {
+    var chats = fpt.chat.getList();
+    var unread = chats.filter(function(c) { return c.isUnread; });
+    fpt.app.toast("Непрочитанных: " + unread.length);
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ext-contextmenu" data-search="fpt.contextMenu addItem контекстное меню chat_message chat_user order_item lot_item">
+      <div class="section-header">
+        <div><h3>fpt.contextMenu <span style="font-family:var(--font-body);font-size:.75em;font-weight:400;color:var(--color-text-muted)">2.0+</span></h3><p>Пункты в контекстном меню при долгом нажатии на элементы.</p></div>
+        <span class="tag warn">v2.0+</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.contextMenu.addItem(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Добавляет пункт в контекстное меню.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>target</code></td><td>string</td><td><code>"chat_message"</code>, <code>"chat_user"</code>, <code>"order_item"</code>, <code>"lot_item"</code></td></tr>
+            <tr><td><code>label</code></td><td>string</td><td>Текст пункта меню</td></tr>
+            <tr><td><code>icon</code></td><td>string</td><td>URL иконки (опционально)</td></tr>
+            <tr><td><code>onClick</code></td><td>string</td><td>JS-вызов: получает <code>itemId</code> как аргумент</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>if (typeof fpt.contextMenu !== 'undefined') {
+    fpt.contextMenu.addItem({
+        target: "chat_message",
+        label: "Переписать через ИИ",
+        onClick: "window.rewriteMsg"
+    });
+}
+
+window.rewriteMsg = function(messageId) {
+    fpt.app.log("Переписываю сообщение ID: " + messageId);
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ext-navigation" data-search="fpt.navigation addTab вкладка навигация badge нижняя">
+      <div class="section-header">
+        <div><h3>fpt.navigation <span style="font-family:var(--font-body);font-size:.75em;font-weight:400;color:var(--color-text-muted)">2.0+</span></h3><p>Добавление собственных вкладок в нижнюю навигацию приложения.</p></div>
+        <span class="tag warn">v2.0+</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.navigation.addTab(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Добавляет вкладку в нижнюю навигацию.</div>
+          <div class="table-wrap"><table><thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead><tbody>
+            <tr><td><code>id</code></td><td>string</td><td>Уникальный ID вкладки</td></tr>
+            <tr><td><code>label</code></td><td>string</td><td>Название вкладки</td></tr>
+            <tr><td><code>icon</code></td><td>string</td><td>Имя иконки Material или URL</td></tr>
+            <tr><td><code>badge</code></td><td>string</td><td>Текст бейджа (опционально)</td></tr>
+            <tr><td><code>onClick</code></td><td>string</td><td>JS-вызов при нажатии на вкладку</td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>if (typeof fpt.navigation !== 'undefined') {
+    fpt.navigation.addTab({
+        id: "my_stats_tab",
+        label: "Статистика",
+        icon: "chart",
+        badge: "3",
+        onClick: "window.showStats()"
+    });
+}
+
+window.showStats = function() {
+    var sales = fpt.users.getSales();
+    fpt.app.toast("Продаж: " + sales.length);
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ext-compose" data-search="fpt.compose showDialog showBottomSheet showSnackbar showAlert диалог нативный">
+      <div class="section-header">
+        <div><h3>fpt.compose <span style="font-family:var(--font-body);font-size:.75em;font-weight:400;color:var(--color-text-muted)">2.0+</span></h3><p>Нативные Compose-диалоги, BottomSheet, Snackbar и Alert поверх WebView.</p></div>
+        <span class="tag warn">v2.0+</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.compose.showDialog(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Показывает нативный диалог. Поля: <code>title</code>, <code>message</code>, <code>confirmText</code>, <code>cancelText</code>, <code>onConfirm</code>, <code>onCancel</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.compose.showBottomSheet(config)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Показывает нижний лист с произвольным UI. Поля: <code>title</code>, <code>children</code> (UI-дерево), <code>onDismiss</code>.</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.compose.showSnackbar(message, actionText, onAction)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Показывает Snackbar с опциональной кнопкой действия.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.compose.showAlert(title, message)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Простой нативный Alert с кнопкой «ОК».</div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>if (typeof fpt.compose !== 'undefined') {
+    fpt.compose.showDialog({
+        title: "Подтверждение",
+        message: "Поднять все лоты?",
+        confirmText: "Да",
+        cancelText: "Отмена",
+        onConfirm: "window.doRaise()",
+        onCancel: ""
+    });
+}
+
+window.doRaise = function() {
+    fpt.lots.raiseAll();
+    fpt.app.toast("Лоты подняты!");
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ext-events" data-search="fpt.events subscribe unsubscribe emit custom events подписка фильтр отписка кастомные события между плагинами">
+      <div class="section-header">
+        <div><h3>fpt.events <span style="font-family:var(--font-body);font-size:.75em;font-weight:400;color:var(--color-text-muted)">2.0+</span></h3><p>Расширенная система событий: подписки с фильтрами, отписка, кастомные события между плагинами.</p></div>
+        <span class="tag warn">v2.0+</span>
+      </div>
+      <div class="section-card">
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.events.subscribe(config)</span><span class="return-type">→ string</span></div>
+          <div class="method-desc">Подписывается на событие с опциональным фильтром. Возвращает ID подписки для отписки. Поля: <code>event</code> (имя события), <code>handler</code> (строка вызова <code>"window.fn"</code>), <code>filter</code> (опциональный объект-фильтр).</div>
+        </div>
+        <div class="method-block">
+          <div class="method-name"><span class="method-sig">fpt.events.unsubscribe(subscriptionId)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Отписывается от события по ID подписки, возвращённому <code>subscribe()</code>.</div>
+        </div>
+        <div class="method-block" style="border-bottom:none;margin:0;padding:0">
+          <div class="method-name"><span class="method-sig">fpt.events.emit(eventName, data)</span><span class="return-type">→ void</span></div>
+          <div class="method-desc">Публикует кастомное событие для других плагинов. <code>data</code> — любой JSON-сериализуемый объект.</div>
+        </div>
+        <div class="code-wrap" style="margin-top:1.25rem">
+<pre>if (typeof fpt.events !== 'undefined') {
+    var subId = fpt.events.subscribe({
+        event: "onBalanceChanged",
+        handler: "window.onBalance"
+    });
+
+    // Отписаться позже, если нужно:
+    // fpt.events.unsubscribe(subId);
+
+    // Кастомное событие между плагинами:
+    fpt.events.emit("myPlugin:statusChanged", { active: true });
+}
+
+window.onBalance = function(data) {
+    fpt.app.log("Баланс изменился: " + JSON.stringify(data));
+};</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CANVAS -->
+    <section class="section" id="canvas" data-search="canvas image fetchImageBase64 saveBase64Image sendWithImage cors base64 local uri пайплайн">
+      <div class="section-header">
+        <div><h3>Canvas to Image</h3><p>Генерация изображений через <code>&lt;canvas&gt;</code> внутри WebView и отправка их в чат.</p></div>
+        <span class="tag">Критический поток</span>
+      </div>
+      <div class="section-card">
+        <div class="callout">
+          <strong>Обязательная цепочка</strong>
+          <p>Внешние картинки нельзя тянуть в Canvas напрямую (CORS). Цепочка строго такая: <code>fpt.network.fetchImageBase64(url)</code> → установить как <code>src</code> → нарисовать на Canvas → <code>canvas.toDataURL()</code> → <code>fpt.app.saveBase64Image()</code> → <code>fpt.chat.sendWithImage()</code></p>
+        </div>
+        <div class="code-wrap">
+<pre>fpt.on("onNewOrder", function(data) {
+    var chatId = data.chatId;
+    var avatarBase64 = fpt.network.fetchImageBase64(
+        "https://funpay.com/img/avatars/default.png"
+    );
+
+    var img = new Image();
+    img.onload = function() {
+        // Создаём canvas
+        var canvas = document.createElement("canvas");
+        canvas.width = 400;
+        canvas.height = 200;
+        var ctx = canvas.getContext("2d");
+
+        // Фон
+        ctx.fillStyle = "#1a1a2e";
+        ctx.fillRect(0, 0, 400, 200);
+
+        // Аватар
+        ctx.drawImage(img, 20, 50, 100, 100);
+
+        // Текст
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 24px sans-serif";
+        ctx.fillText("Новый заказ!", 140, 90);
+        ctx.font = "16px sans-serif";
+        ctx.fillStyle = "#aaaaaa";
+        ctx.fillText("от " + data.buyerName, 140, 120);
+
+        // Сохраняем и отправляем
+        var finalBase64 = canvas.toDataURL("image/png");
+        var localUri = fpt.app.saveBase64Image(finalBase64);
+        if (localUri) {
+            fpt.chat.sendWithImage(chatId, "Получил ваш заказ!", localUri, true);
+        }
+    };
+    img.src = avatarBase64;
+});</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIMITS -->
+    <section class="section" id="limits" data-search="лимиты ограничения 2000 символов 20 переносов 160 длина слова markdown html чистый текст платформа">
+      <div class="section-header">
+        <div><h3>Лимиты платформы</h3><p>Строгие ограничения FunPay для сообщений и контента.</p></div>
+        <span class="tag">Strict limits</span>
+      </div>
+      <div class="section-card table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Компонент</th>
-              <th>Назначение</th>
-              <th>Ключевые элементы</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Ограничение</th><th>Значение</th><th>Примечание</th></tr></thead>
           <tbody>
-            <tr>
-              <td><code>AccountBannedView</code></td>
-              <td>Экран блокировки аккаунта с официальной причиной и кнопкой в поддержку.</td>
-              <td>Icon, scrollable reason box, CTA button.</td>
-            </tr>
-            <tr>
-              <td><code>GreetingDialog</code></td>
-              <td>Редактор приветствия с текстом, картинкой, кулдауном и порядком вывода.</td>
-              <td>Photo Picker, checkbox, slider, save/cancel.</td>
-            </tr>
-            <tr>
-              <td><code>ReviewSettingsDialog</code></td>
-              <td>Настройка ответов на отзывы: AI и шаблоны.</td>
-              <td>Tabs, sliders, switches, text fields, PRO gate.</td>
-            </tr>
-            <tr>
-              <td><code>ChatDetailScreen</code></td>
-              <td>Экран переписки с поиском, переводом, вложениями и выделением сообщений.</td>
-              <td>Lazy list, selection mode, multi-image dialog, swipe-back.</td>
-            </tr>
-            <tr>
-              <td><code>BusyModeDialog</code></td>
-              <td>Подробная настройка режима занятости.</td>
-              <td>Message, image, cooldown, refund flags, keep rules.</td>
-            </tr>
+            <tr><td>Максимум символов в сообщении</td><td><strong>2 000</strong></td><td>Считаются включая пробелы.</td></tr>
+            <tr><td>Максимум переносов строки</td><td><strong>20</strong></td><td>Каждый <code>\n</code> считается отдельно.</td></tr>
+            <tr><td>Максимальная длина одного слова</td><td><strong>160 символов</strong></td><td>Без пробелов подряд.</td></tr>
+            <tr><td>Форматирование</td><td><strong>Только чистый текст</strong></td><td>Никакого Markdown, HTML, кастомных анкоров.</td></tr>
+            <tr><td>Изображения</td><td><strong>Через API</strong></td><td>Нельзя отправить ссылку как картинку; только через <code>sendWithImage()</code>.</td></tr>
           </tbody>
         </table>
-      </section>
+      </div>
+    </section>
 
-      <section class="card span-6">
-        <h2>GreetingDialog</h2>
-        <div class="endpoint"><span class="method">UI</span><span class="path">/settings/greeting</span></div>
-        <ul>
-          <li>Поле текста приветствия.</li>
-          <li>Поддержка переменных: <code>$username</code>, <code>$chat_name</code>, <code>$chat_id</code>, <code>$date</code>, <code>$time</code>, <code>$full_date</code>, <code>$message_text</code>.</li>
-          <li>Выбор изображения через Photo Picker.</li>
-          <li>Порядок вывода картинки относительно текста.</li>
-          <li>Кулдаун от 1 до 168 часов.</li>
-          <li>Игнорирование системных сообщений.</li>
-        </ul>
-      </section>
-
-      <section class="card span-6">
-        <h2>ReviewSettingsDialog</h2>
-        <div class="endpoint"><span class="method post">UI</span><span class="path">/settings/reviews</span></div>
-        <ul>
-          <li>Два режима: AI и шаблоны.</li>
-          <li>PRO-доступ для AI-режима.</li>
-          <li>AI length от 1 до 10.</li>
-          <li>Опции: название лота, дата, стиль, инструкция, fallback.</li>
-          <li>Ручные шаблоны на 1–5 звёзд с включением/выключением.</li>
-          <li>Справка по переменным от <code>FpPlaceholders</code>.</li>
-        </ul>
-      </section>
-
-      <section class="card span-12">
-        <h2>Chat Organization</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>API</th>
-              <th>Описание</th>
-              <th>Особенности</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>ChatFolderTabs</code></td>
-              <td>Горизонтальные вкладки фильтрации чатов.</td>
-              <td>Анимация цвета, кнопка “+” для управления папками.</td>
-            </tr>
-            <tr>
-              <td><code>ChatItemView</code></td>
-              <td>Карточка чата с аватаром, последним сообщением, меню и ярлыками.</td>
-              <td>Tooltip по меткам, архив, навигация в профиль и чат.</td>
-            </tr>
-            <tr>
-              <td><code>ChatItemMenu</code></td>
-              <td>Контекстное меню чата.</td>
-              <td>Метки, папки, копирование ссылки, архивирование.</td>
-            </tr>
-            <tr>
-              <td><code>ManageFoldersDialog</code></td>
-              <td>Создание и удаление папок.</td>
-              <td>Готовые пресеты и пользовательские папки.</td>
-            </tr>
-            <tr>
-              <td><code>ManageLabelsDialog</code></td>
-              <td>Создание и удаление меток.</td>
-              <td>Цвета меток, список доступных цветов, удаление.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card span-8">
-        <h2>Chat Detail</h2>
-        <div class="endpoint"><span class="method">UI</span><span class="path">/chat/{chatId}/{username}</span></div>
-        <ul>
-          <li>Загрузка истории сообщений и автопрокрутка вниз.</li>
-          <li>Поиск по сообщениям и навигация по результатам.</li>
-          <li>Выделение сообщений, копирование и ответ на одно сообщение.</li>
-          <li>Отправка одной или нескольких картинок.</li>
-          <li>Полноэкранный просмотр изображения.</li>
-          <li>Жест возврата свайпом от левого края.</li>
-          <li>Поддержка вставки изображений через content receiver.</li>
-        </ul>
-      </section>
-
-      <section class="card span-4">
-        <h2>Media Input</h2>
-        <p>Используются <code>PickVisualMedia</code> и <code>PickMultipleVisualMedia(maxItems = 10)</code> для выбора изображений.</p>
-        <p>Перед отправкой показывается диалог предпросмотра с подтверждением.</p>
-      </section>
-
-      <section class="card span-12">
-        <h2>Busy Mode and Schedule</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>API</th>
-              <th>Описание</th>
-              <th>Behavior</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>BusyModeCard</code></td>
-              <td>Карточка быстрого включения режима занятости.</td>
-              <td>Меняет цвет, высоту и границу при активации.</td>
-            </tr>
-            <tr>
-              <td><code>BusyModeDialog</code></td>
-              <td>Глубокая настройка busy mode.</td>
-              <td>Сообщение, кулдаун, авто-возврат, исключения, image order.</td>
-            </tr>
-            <tr>
-              <td><code>BusyScheduleSettings</code></td>
-              <td>Список расписаний по дням и минутам.</td>
-              <td>Поддержка слотов через полночь.</td>
-            </tr>
-            <tr>
-              <td><code>ChatFolderManager.getActiveScheduleSlot()</code></td>
-              <td>Определяет активный слот расписания.</td>
-              <td>Учитывает текущий день, вчерашний день и минуты суток.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card span-6">
-        <h2>Support & Licensing</h2>
-        <ul>
-          <li>Карточка “Мой доступ к функциям” с состояниями: PRO, рекламная разблокировка, закрыто.</li>
-          <li>Разъяснение, что закрыты только настройки, а не уже работающая функция.</li>
-          <li>Раздел поддержки разработки, портфолио, Telegram, реквизиты и FunPay-профиль.</li>
-          <li><code>ImprovedTariffCard</code> для кликабельных промо-карт.</li>
-          <li><code>ImprovedCopyableField</code> для копируемых реквизитов.</li>
-        </ul>
-      </section>
-
-      <section class="card span-6">
-        <h2>Utility Components</h2>
-        <pre>@Composable
-fun ImprovedCopyableField(
-  label: String,
-  value: String,
-  icon: ImageVector,
-  theme: AppTheme,
-  onCopy: (String) -> Unit
-)</pre>
-        <p class="small">Кликабельное поле с иконкой, названием, значением и кнопкой копирования. Используется для реквизитов и других однотипных строковых данных.</p>
-      </section>
-
-      <section class="card span-12">
-        <h2>Preset Definitions</h2>
-        <pre>private val presetFolderDefs = listOf(
-  ChatFolder(id = "preset_unread", name = "Непрочитанные", isPreset = true, presetType = "unread"),
-  ChatFolder(id = "preset_labeled", name = "С метками", isPreset = true, presetType = "labeled"),
-  ChatFolder(id = "preset_archived", name = "Архив", isPreset = true, presetType = "archived"),
-)</pre>
-        <p class="note">Пресеты позволяют быстро фильтровать список чатов по статусу, меткам и архиву без ручного создания папок.</p>
-      </section>
-
-      <section class="card span-12">
-        <h2>API Surface Summary</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Composables / objects</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Authentication / status</td>
-              <td><code>AccountBannedView</code></td>
-              <td>Статус блокировки и переход в поддержку.</td>
-            </tr>
-            <tr>
-              <td>Automation</td>
-              <td><code>GreetingDialog</code>, <code>ReviewSettingsDialog</code>, <code>BusyModeDialog</code></td>
-              <td>Гибкая настройка автоматизации общения и обработки заказов.</td>
-            </tr>
-            <tr>
-              <td>Messaging</td>
-              <td><code>ChatDetailScreen</code>, <code>ChatItemView</code>, <code>ChatItemMenu</code></td>
-              <td>Просмотр, управление и отправка сообщений.</td>
-            </tr>
-            <tr>
-              <td>Organization</td>
-              <td><code>ChatFolderTabs</code>, <code>ManageFoldersDialog</code>, <code>ManageLabelsDialog</code></td>
-              <td>Папки, метки и фильтрация чатов.</td>
-            </tr>
-            <tr>
-              <td>Monetization</td>
-              <td><code>PremiumFeature</code>, license checks, support cards</td>
-              <td>PRO-доступ, ad-unlock и донаты.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="card span-12">
-        <h2>Compose / Android Patterns</h2>
-        <ul>
-          <li><code>rememberSaveable</code> и <code>mutableStateOf</code> используются для устойчивого UI-состояния.</li>
-          <li><code>Dialog</code> применён для крупных настроек, которые не помещаются в основной экран.</li>
-          <li><code>LazyColumn</code> помогает держать диалоги и настройки производительными.</li>
-          <li><code>rememberLauncherForActivityResult</code> используется для безопасного выбора фото через Photo Picker.</li>
-          <li><code>SharedPreferences</code> хранит пользовательские сущности и настройки без внешней базы.</li>
-          <li>Анимации построены через <code>animateColorAsState</code>, <code>animateDpAsState</code> и <code>AnimatedVisibility</code>.</li>
-        </ul>
-      </section>
-
-      <section class="card span-12">
-        <h2>Final Notes</h2>
-        <p>
-          Этот HTML уже собран как полноценная документация по текущему состоянию кода: основные экраны, модели, хранилище,
-          Compose-подходы, режимы монетизации и управленческие сценарии включены в одну структуру.
-        </p>
-      </section>
-    </div>
+    <!-- AI RULES -->
+    <section class="section" id="ai-rules" data-search="инструкции для ии window input баг plugin_slot_key запреты while true allisighs ai rules">
+      <div class="section-header">
+        <div><h3>Инструкции для ИИ</h3><p>Правила, обязательные при генерации кода плагина. Особенно важны при использовании LLM или авто-генераторов.</p></div>
+        <span class="tag ok">Strict execution</span>
+      </div>
+      <div class="section-card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Правило</th><th>Суть</th></tr></thead>
+            <tbody>
+              <tr><td>Не придумывать API</td><td>Если метода или UI-<code>type</code> нет в этом документе — его не существует.</td></tr>
+              <tr><td>Не объявлять <code>PLUGIN_ID</code> и <code>PLUGIN_SLOT_KEY</code></td><td>Они уже присутствуют в глобальной области видимости плагина; ядро инжектирует их через IIFE.</td></tr>
+              <tr><td>Всегда использовать <code>PLUGIN_SLOT_KEY</code></td><td>Нельзя собирать ключ слота вручную (например, <code>"settings_" + PLUGIN_ID</code>).</td></tr>
+              <tr><td>Никаких <code>while(true)</code></td><td>Для фоновой работы использовать <code>setInterval</code> или рекурсивный <code>setTimeout</code>.</td></tr>
+              <tr><td>Canvas и отправка картинок</td><td>Строго: <code>fetchImageBase64</code> → Canvas → <code>saveBase64Image</code> → <code>sendWithImage</code>.</td></tr>
+              <tr><td><code>@banner</code></td><td>Должен быть прямой ссылкой на изображение <code>.png</code> или <code>.jpg</code>.</td></tr>
+              <tr><td><code>window</code> для UI-коллбэков</td><td>Любой UI callback обязан быть глобальным: <code>window.fn = function(){}</code>.</td></tr>
+              <tr><td>Баг с <code>Input</code></td><td>Переносы строк могут ломать стейт; всегда применять <code>singleLine: true</code>.</td></tr>
+              <tr><td>Обновление UI</td><td>После <code>setState</code> нужен повторный <code>setSlot</code>, иначе инпут не обновится визуально.</td></tr>
+              <tr><td>Расширенное API 2.0+</td><td>Перед использованием всегда проверять наличие: <code>if (typeof fpt.overlay !== 'undefined')</code>.</td></tr>
+              <tr><td>Выход за рамки API</td><td>Если нужен недоступный функционал, советовать обратиться к разработчику <code>@AlliSighs</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
     <div class="footer">
-      FunPay Tools API Documentation · Updated from latest provided code fragments
+      Полная DAI-документация FunPay Tools · v1.3.0.2 · Построена на основе исходного кода проекта · © 2026 XaviersDev (AlliSighs)
     </div>
-  </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  // Theme toggle
+  var toggle = document.querySelector('[data-theme-toggle]');
+  var root = document.documentElement;
+  var stored = localStorage.getItem('fpt-theme');
+  var preferDark = matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', stored || (preferDark ? 'dark' : 'light'));
+  function renderIcon(){
+    var dark = root.getAttribute('data-theme') === 'dark';
+    toggle.innerHTML = dark
+      ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+  renderIcon();
+  toggle.addEventListener('click', function(){
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('fpt-theme', next);
+    renderIcon();
+  });
+
+  // Nav active on scroll
+  var links = [...document.querySelectorAll('.nav a')];
+  var sections = [...document.querySelectorAll('main .section, .hero')];
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id); });
+      }
+    });
+  }, {rootMargin: '-20% 0px -65% 0px', threshold: 0.05});
+  sections.forEach(function(s){ observer.observe(s); });
+
+  // Search
+  var search = document.getElementById('search');
+  var blocks = [...document.querySelectorAll('[data-search]')];
+  search.addEventListener('input', function(){
+    var q = search.value.trim().toLowerCase();
+    blocks.forEach(function(el){
+      var hit = !q || (el.dataset.search + ' ' + el.textContent).toLowerCase().includes(q);
+      el.classList.toggle('hidden', !hit);
+    });
+  });
+})();
+</script>
 </body>
 </html>
